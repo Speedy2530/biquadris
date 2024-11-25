@@ -1,0 +1,11 @@
+
+
+Idea for representing differnet players in game engine:
+
+each player has its own level and board, can be represented in vectors
+
+e.g. vector playerLevels: Level p1, Level p2
+
+when wanting to get next block of p1:
+
+Block next = playerLevels[int p1 //0//]->getNextBlock()
