@@ -35,7 +35,7 @@ void CommandInterpreter::callMethod(string command, string file = "") {
 		case "levelup": case "lu":
 			//
 			break;
-		case "leveldown": case "ld:
+		case "leveldown": case "ld":
 			//
 			break;
 		case "norandom": case "nr": case "no":
