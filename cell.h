@@ -15,25 +15,23 @@ class Cell {
     //std::shared_ptr<Block> block;  block that it point to
 
     public:
-        Cell(int r = 0, int c = 0, char s = ' ') : row{r}, col{c}, shape{s}, locked{false}, blind{false} {}
+        Cell(int r, int c, char s);
 
         // Accessors
-        int getRow() const { return row; }
-        int getCol() const { return col; }
-        char getShape() const { return shape; }
-        bool isFilled() const { return shape != ' '; }
-        bool isLocked() const { return locked; }
-        bool isBlind() const { return blind; }
+        int getRow() const;
+        int getCol() const;
+        char getShape() const;
+        bool isFilled() const;
+        bool isLocked() const;
+        bool isBlind() const;
 
         // Mutators
-        void setFill(char s) { shape = s; }
-        void setLocked(bool lock) { locked = lock; }
-        void setBlind(bool b) { blind = b; }
+        void setFill(char s);
+        void setLocked(bool lock);
+        void setBlind(bool b);
 
         // Display
-        void display() const {
-            if (!blind) cout << shape : cout << '?';
-        }
+        void display() const;
 
         //void setBlock(std::shared_ptr<Block>) 
 };
