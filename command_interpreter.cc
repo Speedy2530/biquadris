@@ -14,37 +14,37 @@ void CommandInterpreter::callMethod(string command, string file = "") {
 	}
 
 	switch (command) {
-		case "left", "l", "lef":
+		case "left": case "l": case "lef":
 			//
 			break;
-		case "right", "r", "ri":
+		case "right": case "r": case "ri":
 			//
 			break;
-		case "down", "dn", "do":
+		case "down": case "dn": case "do":
 			//
 			break;
-		case "clockwise", "c", "cl":
+		case "clockwise": case "c": case "cl":
 			//
 			break;
-		case "counterclockwise", "cc", "co":
+		case "counterclockwise": case "cc": case "co":
 			//
 			break;
-		case "drop", "dp", "dr":
+		case "drop": case "dp": case "dr":
 			//
 			break;
-		case "levelup", "lu":
+		case "levelup": case "lu":
 			//
 			break;
-		case "leveldown", "ld:
+		case "leveldown": case "ld:
 			//
 			break;
-		case "norandom", "nr", "no":
+		case "norandom": case "nr": case "no":
 			//
 			break;
-		case "random", "rm", "ra":
+		case "random": case "rm": case "ra":
 			//
 			break;
-		case "sequence", "s", "se":
+		case "sequence": case "s": case "se":
 			//
 			break;
 		case "I":
@@ -68,7 +68,7 @@ void CommandInterpreter::callMethod(string command, string file = "") {
 		case "T":
 			//
 			break;
-		case "restart", "re":
+		case "restart": case "re":
 			//
 			break;
 		default:
