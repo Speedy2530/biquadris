@@ -9,3 +9,7 @@ e.g. vector playerLevels: Level p1, Level p2
 when wanting to get next block of p1:
 
 Block next = playerLevels[int p1 //0//]->getNextBlock()
+
+
+BOARD should have a Absolute position for X and Y of the current block, representing the
+bottom left.

@@ -15,7 +15,7 @@ class Cell {
     //std::shared_ptr<Block> block;  block that it point to
 
     public:
-        Cell(int r = 0, int c = 0) : row{r}, col{c}, shape{' '}, locked{false}, blind{false} {}
+        Cell(int r = 0, int c = 0, char s = ' ') : row{r}, col{c}, shape{s}, locked{false}, blind{false} {}
 
         // Accessors
         int getRow() const { return row; }

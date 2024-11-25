@@ -3,20 +3,17 @@
 using namespace std;
 
 OBlock::OBlock(bool isCurr) : Block{isCurr}, shape{'O'} {
-    relPos.emplace_back(0, 0); 
-    relPos.emplace_back(0, 1); 
-    relPos.emplace_back(1, 0); 
-    relPos.emplace_back(1, 1); 
+    relPos = { {0, 0}, {0, 1}, {-1, 0}, {-1, 1} }
 }
 
-vector <pair <int, int> > OBlock::getRelativePositions() const override {
-    return relativePositions;
+vector <pair <int, int> > OBlock::getRelPos() const override {
+    return relPos;
 }
 
 char OBlock::getShape() const override { return 'O'; }
 
-void OBlock::rotate(string direction) {
-    // Nothing needed since it's symmetric
+void OBlock::rotate(string dir) {
+    rotated = 0; // might need to know actual rotated? fix this if needed
 }
 
 unique_ptr<Block> clone() const override {

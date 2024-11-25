@@ -67,7 +67,7 @@ unique_ptr<Block> Level0::getNextBlock() {
             break;
     }
 
-    // Move to the next block in the sequence
+    // next block in seq
     currentIndex = (currentIndex + 1) % seq.size();
 
     return block;
