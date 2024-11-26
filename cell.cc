@@ -43,6 +43,11 @@ void Cell::setBlind(bool b) {
 	blind = b;
 }
 
+void Cell::clear() {
+	shape = ' ';
+	
+}
+
 void Cell::display() const {
 	if (!blind) {
 		cout << shape;

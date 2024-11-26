@@ -29,7 +29,9 @@ class Cell {
         void fill(char s);
         void setLocked(bool lock);
         void setBlind(bool b);
-
+        
+        void clear();
+        
         // Display
         void display() const;
 

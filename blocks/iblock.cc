@@ -16,10 +16,10 @@ void IBlock::rotate(string dir) {
     switch(rotated) {
         case 0:
         	relPos = { {0, 0}, {-1, 0}, {-2, 0}, {-3, 0} };
-                rotated = 1;
+            rotated = 1;
         case 1:
-                relPos = { {0, 0}, {0, 1}, {0, 2}, {0, 3} }; 
-                rotated = 0;
+            relPos = { {0, 0}, {0, 1}, {0, 2}, {0, 3} }; 
+            rotated = 0;
     }
 }
 // For above  v
