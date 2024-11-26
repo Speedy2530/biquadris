@@ -13,45 +13,48 @@ vector <pair <int, int> > TBlock::getRelPos() const {
 char TBlock::getShape() const { return 'T'; }
 
 void TBlock::rotate(string dir) {
-    switch(rotated) {
-        case 0:
-            if (dir == "clockwise") {
-                relPos = { {-1, 0}, {0, 1}, {-2, 1}, {-1, 1} };
+    if (dir == "clockwise") {
+        switch (rotated) {
+            case 0: // Rotate 0° -> 90°
+                relPos = { {0, 1}, {-1, 0}, {-1, 1}, {-2, 1} };
                 rotated = 1;
-            }
-            else {
-                relPos = { {-2, 0}, {-1, 0}, {0, 0}, {-1, 0} }; 
-                rotated = 3;
-            }
-        case 1:
-            if (dir == "clockwise") {
-                relPos = { {0, 0}, {0, 1}, {0, 2}, {-1, 1} }; 
-                rotated = 2;
-            }
-            else {
-                relPos = { {-1, 0}, {-1, 1}, {-1, 2}, {0, 1} }; 
-                rotated = 0;
-            }
-        case 2:
-            if (dir == "clockwise") {
-                relPos = { {-2, 0}, {-1, 0}, {0, 0}, {-1, 0} }; 
-                rotated = 3;
-            }
-            else {
-                relPos = { {-1, 0}, {0, 1}, {-2, 1}, {-1, 1} }; 
-                rotated = 1;
-            }
-        case 3: 
-            if (dir == "clockwise") {
+                break;
+            case 1: // Rotate 90° -> 180°
                 relPos = { {-1, 0}, {-1, 1}, {-1, 2}, {0, 1} };
-                rotated = 0;
-            }
-            else {
-                relPos = { {0, 0}, {0, 1}, {0, 2}, {-1, 1} };
                 rotated = 2;
-            }
+                break;
+            case 2: // Rotate 180° -> 270°
+                relPos = { {0, 0}, {-1, 0}, {-1, 1}, {-2, 0} };
+                rotated = 3;
+                break;
+            case 3: // Rotate 270° -> 0°
+                relPos = { {0, 0}, {0, 1}, {0, 2}, {-1, 1} };
+                rotated = 0;
+                break;
+        }
+    } else if (dir == "counterclockwise") {
+        switch (rotated) {
+            case 0: // Rotate 0° -> 270°
+                relPos = { {0, 0}, {-1, 0}, {-1, 1}, {-2, 0} };
+                rotated = 3;
+                break;
+            case 3: // Rotate 270° -> 180°
+                relPos = { {-1, 0}, {-1, 1}, {-1, 2}, {0, 1} };
+                rotated = 2;
+                break;
+            case 2: // Rotate 180° -> 90°
+                relPos = { {0, 1}, {-1, 0}, {-1, 1}, {-2, 1} };
+                rotated = 1;
+                break;
+            case 1: // Rotate 90° -> 0°
+                relPos = { {0, 0}, {0, 1}, {0, 2}, {-1, 1} };
+                rotated = 0;
+                break;
+        }
     }
 }
+
+
 // For above  v
 //essentially, when you add the block to the board, just get its Cell values by adding <3, 0>,
 //or whatever the coordinate of the current bottom left is on the board (absRow, absCol).

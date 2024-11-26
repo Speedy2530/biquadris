@@ -1,6 +1,7 @@
 #ifndef COMMAND_INTERPRETER_H
 #define COMMAND_INTERPRETER_H
 
+#include "block.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -16,9 +17,9 @@ class CommandInterpreter {
     };
 
 public:
-    void callMethod(string command, string file = "");
+    void callMethod(string command, Block& block);
     string fullCommandName(string command);
-    int getMultiplier(string command);
+    int getMultiplier(string command, Block& block);
 };
 
 #endif

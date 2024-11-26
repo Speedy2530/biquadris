@@ -1,10 +1,11 @@
+#include "block.h"
 #include "command_interpreter.h"
 #include <iostream>
 #include <algorithm>
 
 using namespace std;
 
-void CommandInterpreter::callMethod(string command, string file) {
+void CommandInterpreter::callMethod(string command, Block& block) {
     // Normalize the command to lowercase
     transform(command.begin(), command.end(), command.begin(), ::tolower);
 
@@ -16,9 +17,11 @@ void CommandInterpreter::callMethod(string command, string file) {
     } else if (command == "down" || command == "dn" || command == "do") {
         // Handle "down" command
     } else if (command == "clockwise" || command == "c" || command == "cl") {
-        // Handle "clockwise" command
+	    block.rotate("clockwise");
+	    // Handle "clockwise" command
     } else if (command == "counterclockwise" || command == "cc" || command == "co") {
-        // Handle "counterclockwise" command
+	    block.rotate("counterclockwise");
+	    // Handle "counterclockwise" command
     } else if (command == "drop" || command == "dp" || command == "dr") {
         // Handle "drop" command
     } else if (command == "levelup" || command == "lu") {
@@ -57,18 +60,20 @@ string CommandInterpreter::fullCommandName(string command) {
     return command; // Return as-is if no match
 }
 
-int CommandInterpreter::getMultiplier(string command) {
-    // Extract a multiplier (e.g., "2left" -> 2)
+int CommandInterpreter::getMultiplier(string command, Block& block) {
     int multiplier = 1;
     size_t pos = 0;
+
+    // Extract the numeric multiplier (e.g., "2left" -> 2)
     while (pos < command.length() && isdigit(command[pos])) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
     }
 
-    for (int i = 0; i < multiplier; ++i) {
-	    callMethod(command.substr(pos, command.length()));
+    // Call the method with the stripped command and pass the Block reference
+    if (pos < command.length()) {
+        callMethod(command.substr(pos, command.length()), block);
     }
 
-    return multiplier > 1 ? multiplier : 1; // Default to 1 if no multiplier
+    return multiplier > 1 ? multiplier : 1; // Default multiplier is 1 if no number found
 }
