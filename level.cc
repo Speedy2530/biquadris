@@ -34,25 +34,25 @@ unique_ptr<Block> Level::makeBlockFromFile() {
 
     switch(blockType) {
         case 'I':
-            block = make_unique<IBlock>();
+            block = make_unique<IBlock>(levelNum);
             break;
         case 'J':
-            block = make_unique<JBlock>();
+            block = make_unique<JBlock>(levelNum);
             break;
         case 'L':
-            block = make_unique<LBlock>();
+            block = make_unique<LBlock>(levelNum);
             break;
         case 'O':
-            block = make_unique<OBlock>();
+            block = make_unique<OBlock>(levelNum);
             break;
         case 'S':
-            block = make_unique<SBlock>();
+            block = make_unique<SBlock>(levelNum);
             break;
         case 'T':
-            block = make_unique<TBlock>();
+            block = make_unique<TBlock>(levelNum);
             break;
         case 'Z':
-            block = make_unique<ZBlock>();
+            block = make_unique<ZBlock>(levelNum);
             break;
         default:
             cerr << "Warning: Unknown block type '" << blockType << "' in sequence." << endl;
@@ -81,25 +81,25 @@ unique_ptr<Block> blockFromIndex(int idx) {
 
     switch(idx) {
         case 0:
-            block = make_unique<IBlock>();
+            block = make_unique<IBlock>(levelNum);
             break;
         case 1:
-            block = make_unique<JBlock>();
+            block = make_unique<JBlock>(levelNum);
             break;
         case 2:
-            block = make_unique<LBlock>();
+            block = make_unique<LBlock>(levelNum);
             break;
         case 3:
-            block = make_unique<OBlock>();
+            block = make_unique<OBlock>(levelNum);
             break;
         case 4:
-            block = make_unique<SBlock>();
+            block = make_unique<SBlock>(levelNum);
             break;
         case 5:
-            block = make_unique<TBlock>();
+            block = make_unique<TBlock>(levelNum);
             break;
         case 6:
-            block = make_unique<ZBlock>();
+            block = make_unique<ZBlock>(levelNum);
             break;
         default:
             cerr << "Warning: Unknown block type '" << idx << "' in sequence." << endl;

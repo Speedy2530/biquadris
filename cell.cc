@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Cell::Cell(int r = 0, int c = 0, char s = ' ') : row{r}, col{c}, shape{s}, locked{false}, blind{false} {}
+Cell::Cell(int r, int c, char s, int id) : row{r}, col{c}, shape{s}, blockID{id}, locked{false}, blind{false} {}
 
 int Cell::getRow() const {
 	return row;
@@ -17,6 +17,10 @@ int Cell::getCol() const {
 
 char Cell::getShape() const {
 	return shape;
+}
+
+int Cell::getBlockID() const {
+	return blockID;
 }
 
 bool Cell::isFilled() const {
@@ -31,8 +35,9 @@ bool Cell::isBlind() const {
 	return blind;
 }
 
-void Cell::fill(char s) {
+void Cell::fill(char s, int id) {
 	shape = s;
+	blockID = id;
 }
 
 void Cell::setLocked(bool lock) {
@@ -45,7 +50,7 @@ void Cell::setBlind(bool b) {
 
 void Cell::clear() {
 	shape = ' ';
-	
+
 }
 
 void Cell::display() const {

@@ -1,4 +1,5 @@
 #include "board.h"
+#include <iostream>
 
 using namespace std;
 
@@ -10,26 +11,36 @@ Board:Board(unique_ptr<Level> initialLevel, bool textMode) :
     score{0},
     hiScore{0},
     textMode{textMode},
-    gameOver{false} 
+    gameOver{false},
+    currBlockID{-1},
+    linesCleared{0},
+    currLevelNum{0}
     {
+        nextBlock = currLevel->makeNextBlock();
         newBlock();
 }
 
-bool Board::placeBlock(unique_ptr<Block> block) {
-    if (!canPlaceBlock(*block, origRow, origCol)) {
-        gameOver = true;
-        return false;
+
+// Helpers
+bool Board::fillCells() {
+    for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
+        int absRow = origRow + relRow;
+        int absCol = origCol + relCol;
+        grid[absRow][absCol].fill(currBlock->getShape(), currBlockID);
     }
-
-    currBlock = move(block);
-
-    // Place the block on the grid
-    fillCells();
-
-    return true;
 }
 
-// Helper
+int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) {
+    if (!freeBlockIDs.empty()) {
+        int id = freeBlockIDs.back();
+        freeBlockIDs.pop_back();
+        return id;
+    } else {
+        blocks.emplace_back(nullptr); // Placeholder
+        return blocks.size() - 1;
+    }
+}
+
 // row and col in the params represent the "bottom left" position of the block on the board
 bool Board::canPlaceBlock(const Block& block, int row, int col) const {
     for (const auto& [relRow, relCol] : block.getRelPos()) {
@@ -44,66 +55,110 @@ bool Board::canPlaceBlock(const Block& block, int row, int col) const {
     }
 }
 
-// Helper
-bool Board::fillCells() {
-    for (const auto& [relRow, relCol] : currBlock->getRelPos()) {
-        int absRow = origRow + relRow;
-        int absCol = origCol + relCol;
-        grid[absRow][absCol].fill(currBlock->getShape());
-    }
+// bool Board::placeBlock(unique_ptr<Block> block, int row, int col) {
+//     if (!canPlaceBlock(*block, row, col)) {
+//         gameOver = true;
+//         return false;
+//     }
+
+//     int blockID = getNewBlockID(blocks, freeBlockIDs);
+//     blocks[blockID] = move(block);
+//     currBlock = blockID;
+
+//     // Place the block on the grid
+//     fillCells();
+
+//     origRow = row;
+//     origCol = col;
+
+//     return true;
+// }
+
+
+// // Important methods
+void Board::newBlock() {
+    int newBlockID = getNewBlockID(blocks, freeBlockIDs);
+    blocks[newBlockID] = move(nextBlock);
+    currBlock = newBlockID; 
+
+    originRow = 3;
+    originCol = 0;
+
+    fillCells(); // should I do this here?
+    if (!placeBlock(*blocks[newBlockID], originRow, originCol)) gameOver = true;
+
+    nextBlock = currentLevel->makeNextBlock();
 }
 
+
 bool Board::moveBlockLeft() {
-    if (!currBlock) return false;
+    if (currBlockID == -1) return false;
 
     newCol = origCol - 1;
 
-    if (!canPlaceBlock(*currBlock, origRow, newCol)) return false;
+    removeBlockFromGrid(currBlockID, origRow, origCol);
 
-    removeBlock(*currBlock, origRow, origCol);
+    if (!canPlaceBlock(*blocks[currBlockID], origRow, newCol)) {
+        fillCells();
+        return false;
+    }
+
     origCol = newCol;
     fillCells();
+
+    return true;
 }
 
 bool Board::moveBlockRight() {
-    if (!currBlock) return false;
+    if (currBlockID == -1) return false;
 
     newCol = origCol + 1;
 
-    if (!canPlaceBlock(*currBlock, origRow, newCol)) return false;
+    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
 
-    removeBlock(*currBlock, origRow, origCol);
+    if (!canPlaceBlock(*blocks[currBlockID], origRow, newCol)) {
+        fillCells();
+        return false;
+    }
+    
     origCol = newCol;
     fillCells();
+
+    return true;
 }
 
 bool Board::moveBlockDown() {
-    if (!currBlock) return false;
+    if (currBlockID == -1) return false;
 
     newRow = origRow + 1;
 
-    if (!canPlaceBlock(*currBlock, newRow, origCol)) {
+    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
+
+    if (!canPlaceBlock(*blocks[currBlockID], newRow, origCol)) {
         // Can no longer go down, lock the block
+        fillCells();
         lockBlock();
         clearLines();
         newBlock();
         return false;
     }
 
-    removeBlock(*currBlock, origRow, origCol);
     origRow = newRow;
     fillCells();
+
+    return true;
 }
 
 bool Board::rotateBlock(string dir) {
-    if (!currBlock) return false;
+    if (currBlockID == -1) return false;
 
-    removeBlock(*currBlock, origRow, origCol);
+    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
 
-    currBlock->rotate(dir);
+    blocks[currBlockID]->rotate(dir);
 
-    if (canPlaceBlock(*currBlock, origRow, origCell)) {
+    if (canPlaceBlock(*blocks[currBlockID], origRow, origCol)) {
         fillCells();
+
         return true;
     }
     else {
@@ -112,9 +167,7 @@ bool Board::rotateBlock(string dir) {
         else oppositeDir = "clockwise";
         
         // revert the relative position rotation if it doesn't work
-        currBlock->rotate(oppositeDir);
-
-        // replace the block at its original position
+        blocks[currBlockID]->rotate(oppositeDir);
         fillCells();
 
         return false;
@@ -122,7 +175,7 @@ bool Board::rotateBlock(string dir) {
 }
 
 bool Board::dropBlock() {
-    if (!currBlock) return false;
+    if (currBlockID == -1) return false;
 
     while (moveBlockDown()) {
         // Keep moving down until it can't
@@ -136,117 +189,155 @@ void Board::lockBlock() {
     // Update any necessary state if needed
 }
 
-void Board::newBlock() {
-    unique_ptr<Block> newBlock = currLevel->makeNextBlock();
 
-    // Reset bottom left origin to (3, 0) 
-    origRow = 3;
-    origCol = 0;
+// Remove the block from the grid without resetting the unique_ptr
+void Board::removeBlockFromGrid(int blockID, int row, int col) {
+    if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
 
-    if (!placeBlock(move(newBlock), origRow, origCol)) gameOver = true;
-}
-
-
-void Board::clearLines() {
-    int linesCleared = 0;
-
-    for (int r = 0; r < TOTAL_ROWS; r++) {
-        bool fullLine = true;
-        for (int c = 0; c < TOTAL_COLS; c++) {
-            if (!grid[r][c].isFilled()) {
-                fullLine = false;
-                break;
-            }
-        }
-
-        if (fullLine) {
-            linesCleared++;
-            // Clear the line
-            for (int c = 0; c < TOTAL_COLS; c++) {
-                grid[r][c].clear();
-            }
-
-            // Move all rows above down by one
-            // DOUBLE CHECK THIS IDK IF IT WORKS
-            for (int moveRow = r; moveRow < TOTAL_ROWS - 1; moveRow++) {
-                for (int c = 0; c < TOTAL_COLS; c++) {
-                    grid[moveRow][c].fill(grid[moveRow + 1][c].getShape());
-                    grid[moveRow + 1][c].clear();
-                }
-            }
-
-            // Recheck the same row
-            r--;
-        }
-    }
-
-    if (linesCleared > 0) {
-        calculateScore(linesCleared);
-    }
-}
-
-// Scoring  CHECK THIS AS WELL
-void Board::calculateScore(int linesCleared) {
-    int points = (currentLevel->getLevelNum() + linesCleared) * 
-                 (currentLevel->getLevelNum() + linesCleared);
-    score += points;
-
-    // Update high score if necessary
-    if (score > hiScore) {
-        hiScore = score;
-    }
-}
-
-
-// COPIED FROM CHAT
-
-void Board::removeBlock(const Block& block, int row, int col) {
-    for (const auto& [relRow, relCol] : block.getRelPos()) {
+    for (const auto& [relRow, relCol] : blocks[blockID].getRelPos()) {
         int absRow = row + relRow;
         int absCol = col + relCol;
         grid[absRow][absCol].clear();
     }
 }
 
-#include <iostream>
+// Permanently remove the block from the grid and reset the unique_ptr
+void Board::removeBlockPermanently(int blockID, int row, int col) {
+    if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
 
-void Board::display() const {
-    for (int r = TOTAL_ROWS - 1; r >= 0; --r) {
-        std::cout << "|";
-        for (int c = 0; c < TOTAL_COLS; ++c) {
-            if (grid[r][c].isOccupied()) {
-                std::cout << grid[r][c].getShape();
-            } else {
-                std::cout << " ";
+    removeBlockFromGrid(blockID);
+    blocks[blockID].reset();
+    freeBlockIDs.push_back(blockID);
+
+    if (currBlock == blockID) currBlock = -1;
+}
+
+
+void Board::clearLines() {
+    vector<int> clearedBlockIDs; // To store block IDs from cleared lines
+    int linesCleared = 0;
+
+    for (int r = 0; r < TOTAL_ROWS; ++r) {
+        if (isFullLine(r)) {
+            linesCleared++;
+            // Collect all block IDs in this line
+            vector<int> blockIDs = getBlockIDsInLine(r);
+            clearedBlockIDs.insert(clearedBlockIDs.end(), blockIDs.begin(), blockIDs.end());
+
+            // Clear the line
+            clearLine(r);
+
+            // Shift all rows above down by one
+            shiftRowsDown(r);
+
+            // After shifting, recheck the same row as rows have moved down
+            r--;
+        }
+    }
+
+    if (linesCleared > 0) {
+        // Count occurrences of each blockID
+        unordered_map<int, int> blockCount;
+        for (int id : clearedBlockIDs) {
+            blockCount[id]++;
+        }
+
+        // Check for blocks that have all their cells cleared (appear 4 times)
+        for (const auto& [blockID, count] : blockCount) {
+            if (isBlockFullyCleared(blockID, clearedBlockIDs)) {
+                awardPoints(blockID);
             }
         }
-        std::cout << "|\n";
+
+        // Update the score based on lines cleared
+        calculateScore(linesCleared);
+    }
+}
+
+
+// Scoring CHECK
+void Board::calculateScore(int linesCleared) {
+    int points = (currLevel->getLevelNum() + linesCleared) * (currLevel->getLevelNum() + linesCleared);
+    score += points;
+
+    if (score > hiScore) hiScore = score;
+}
+
+
+// Levels
+
+void Board::levelUp() {
+    if (currLevelNum < 4) {
+        currLevelNum++;
+        cout << "Level Up! New Level: " << currentLevelNum << endl;
+    }
+
+    switch (currLevelNum) {
+        case 0:
+            currentLevel = make_unique<Level1>();
+            break;
+        case 1:
+            currentLevel = make_unique<Level2>();
+            break;
+        case 2:
+            currentLevel = make_unique<Level3>();
+            break;
+        case 3:
+            currentLevel = make_unique<Level4>();
+            break;
+        default:
+            cout << "No higher level defined. Staying at Level " << currLevelNum << endl;
+            break;
+    }
+}
+
+void Board::levelDown() {
+    if (currLevelNum != 0) {
+        currLevelNum--;
+        cout << "Level Down! New Level: " << currentLevelNum << endl;
+    }
+
+    switch (currLevelNum) {
+        case 1:
+            currentLevel = make_unique<Level0>();
+            break;
+        case 2:
+            currentLevel = make_unique<Level1>();
+            break;
+        case 3:
+            currentLevel = make_unique<Level2>();
+            break;
+        case 4:
+            currentLevel = make_unique<Level3>();
+            break;
+        default:
+            cout << "No Lower level defined. Staying at Level " << currLevelNum << endl;
+            break;
+    }
+}
+
+
+void Board::display() const {
+    for (int r = TOTAL_ROWS - 1; r >= 0; r--) {
+        cout << "|";
+        for (int c = 0; c < TOTAL_COLS; ++c) {
+            cout << grid[r][c].getShape();
+        }
+        cout << "|\n";
     }
 
     // Print the bottom border
-    std::cout << "+";
+    cout << "+";
     for (int c = 0; c < TOTAL_COLS; ++c) {
-        std::cout << "-";
+        cout << "-";
     }
-    std::cout << "+\n";
+    cout << "+\n";
 
     // Print score and hi score
-    std::cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
+    cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
+    cout << nextBlock->print();
 }
 
-
-int Board::getScore() const {
-    return score;
-}
-
-int Board::getHiScore() const {
-    return hiScore;
-}
-
-void Board::updateHiScore() {
-    if (score > hiScore)
-        hiScore = score;
-}
 
 void Board::reset() {
     // Clear the grid
@@ -256,33 +347,23 @@ void Board::reset() {
         }
     }
 
-    // Reset scores
     score = 0;
-
-    // Reset game state
     gameOver = false;
-
-    // Generate a new block
+    blocks.clear()
+    freeBlockIDs.clear()
+    clearedBlockIDs.clear()
+    currBlock = -1;
+    nextBlock = nullptr;
     newBlock();
 }
 
 
+int Board::getCurrBlockID() { return currBlockID; }
+
+int Board::getScore() const { return score; }
+
+int Board::getHiScore() const { return hiScore; }
+
+void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
 
 bool Board::isGameOver() const return gameOver;
-
-
-
-
-        // Helpers
-        void lockBlock();
-        void clearLines();
-        void calculateScore(int linesCleared);
-        void reset();
-
-        // Scoring
-        int getScore() const;
-        int getHiScore() const;
-        void updateHiScore();
-
-        // Display
-        void display() const;

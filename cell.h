@@ -12,26 +12,29 @@ class Cell {
     char shape; // ' ' if not filled
     bool locked; // if the block dropped
     bool blind;
+
+    int blockID;
     //std::shared_ptr<Block> block;  block that it point to
 
     public:
-        Cell(int r, int c, char s);
+        Cell(int r = 0, int c = 0, char s = ' ', int id = -1);
 
         // Accessors
         int getRow() const;
         int getCol() const;
         char getShape() const;
+        int getBlockID() const;
         bool isFilled() const;
         bool isLocked() const;
         bool isBlind() const;
 
         // Mutators
-        void fill(char s);
+        void fill(char s, int id = -1);
         void setLocked(bool lock);
         void setBlind(bool b);
         
         void clear();
-        
+
         // Display
         void display() const;
 
