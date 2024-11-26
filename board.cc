@@ -96,8 +96,57 @@ bool Board::moveBlockDown() {
 }
 
 bool Board::rotateBlock(string dir) {
+    if (!currBlock) return false;
 
+    removeBlock(*currBlock, origRow, origCol);
+
+    currBlock->rotate(dir);
+
+    if (canPlaceBlock(*currBlock, origRow, origCell)) {
+        fillCells();
+        return true;
+    }
+    else {
+        string oppositeDir = ""
+        if (dir == "clockwise") oppositeDir = "counterclockwise";
+        else oppositeDir = "clockwise";
+        
+        // revert the relative position rotation if it doesn't work
+        currBlock->rotate(oppositeDir);
+
+        // replace the block at its original position
+        fillCells();
+
+        return false;
+    }
 }
+
+bool Board::dropBlock() {
+    if (!currBlock) return false;
+
+    while (moveBlockDown()) {
+        // Keep moving down until it can't
+    }
+
+    return true;
+}
+
+void Board::lockBlock() {
+    // The block is already placed on the grid
+    // Update any necessary state if needed
+}
+
+void Board::newBlock() {
+    unique_ptr<Block> newBlock = currLevel->makeNextBlock();
+
+    // Reset bottom left origin to (3, 0) 
+    origRow = 3;
+    origCol = 0;
+
+    if (!placeBlock(move(newBlock), origRow, origCol)) gameOver = true;
+}
+
+bool Board::isGameOver() return gameOver;
 
 
         // Helpers
@@ -106,11 +155,6 @@ bool Board::rotateBlock(string dir) {
         void calculateScore(int linesCleared);
         void reset();
 
-        // Block Management
-        bool rotateBlock(RotationDirection direction);
-        bool dropBlock();
-        void newBlock();
-
         // Scoring
         int getScore() const;
         int getHiScore() const;
@@ -118,6 +162,3 @@ bool Board::rotateBlock(string dir) {
 
         // Display
         void display() const;
-
-        // Game State
-        bool isGameOver() const;

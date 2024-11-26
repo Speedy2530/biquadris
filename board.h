@@ -14,6 +14,7 @@ class Board {
         vector <vector <Cell> > grid; // 18x11 grid
         unique_ptr<Level> currLevel;
         unique_ptr<Block> currBlock;
+        vector <unique_ptr <Block> > blocks;
         int origRow; 
         int origCol; 
         int score;

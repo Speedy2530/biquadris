@@ -7,7 +7,7 @@ virtual void Block::print() const {
     char grid[4][4] = { {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '} };
 
     for (const auto& pos : relPos) {
-        grid[pos.first][pos.second] = getShape();
+        grid[pos.first + 3][pos.second + 0] = getShape();
     }
 
     // Print the grid
