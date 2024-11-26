@@ -1,5 +1,5 @@
-#ifndef LEVEL0_H
-#define LEVEL0_H
+#ifndef LEVEL2_H
+#define LEVEL2_H
 
 #include "../level.h"
 #include <vector>
@@ -10,13 +10,11 @@
 
 using namespace std;
 
-class Level0 : public Level {
-    string file;
+class Level2 : public Level {
 
     public:
-        Level0(const string& file);
+        Level2();
         unique_ptr<Block> makeNextBlock() override;
-        virtual ~Level0();
 };
 
 #endif 
