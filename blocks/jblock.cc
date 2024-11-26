@@ -2,7 +2,7 @@
 
 using namespace std;
 
-JBlock::JBlock(bool isCurr) : Block{isCurr}, shape{'T'} {
+JBlock::JBlock(bool isCurr) : Block{isCurr}, shape{'J'} {
     relPos = { {-1, 0}, {0, 0}, {0, 1}, {0, 2} };  // Imagine the bottom left was {0, 0}
 }
 
