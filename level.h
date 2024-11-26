@@ -20,3 +20,4 @@ class Level {
 
         int getLevelNum() const { return levelNum; };
 };
+#endif
