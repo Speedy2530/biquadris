@@ -14,7 +14,7 @@ class Level {
         Level(int levelNum);
         virtual ~Level() = default;
 
-        virtual std::unique_ptr<Block> getNextBlock() = 0;
+        virtual std::unique_ptr<Block> makeNextBlock() = 0;
         virtual void onBlockPlaced(bool clearedRows) {}
         virtual void afterMotion(int player) {};
 

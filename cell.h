@@ -26,7 +26,7 @@ class Cell {
         bool isBlind() const;
 
         // Mutators
-        void setFill(char s);
+        void fill(char s);
         void setLocked(bool lock);
         void setBlind(bool b);
 

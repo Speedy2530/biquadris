@@ -32,7 +32,7 @@ void Level0::readFile(const string& file) {
     }
 }
 
-unique_ptr<Block> Level0::getNextBlock() {
+unique_ptr<Block> Level0::makeNextBlock() {
     if (seq.empty()) {
         return nullptr;
     }

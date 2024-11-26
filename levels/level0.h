@@ -17,7 +17,7 @@ class Level0 : public Level {
 
     public:
         Level0(int levelNum, const string& file);
-        unique_ptr<Block> getNextBlock() override;
+        unique_ptr<Block> makeNextBlock() override;
         int getLevel() const override;
         void onBlockPlaced(bool clearedRows) override;
         void afterMoveOrRotate(int playerID) override;
