@@ -1,15 +1,15 @@
-#ifndef OBLOCK_H
-#define OBLOCK_H
+#ifndef JBLOCK_H
+#define JBLOCK_H
 
 #include "../block.h"
 
 using namespace std;
 
-class OBlock : public Block {
+class JBlock : public Block {
     char shape;
 
     public:
-        OBlock(bool isCurr = false);
+        JBlock(bool isCurr = false);
         vector <pair <int, int> > getRelPos() const override;
         char getShape() const override;
         void rotate(string dir) override;
