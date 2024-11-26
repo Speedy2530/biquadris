@@ -65,5 +65,10 @@ int CommandInterpreter::getMultiplier(string command) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
     }
+
+    for (int i = 0; i < multiplier; ++i) {
+	    callMethod(command.substr(pos, command.length()));
+    }
+
     return multiplier > 1 ? multiplier : 1; // Default to 1 if no multiplier
 }
