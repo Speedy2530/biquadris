@@ -3,14 +3,14 @@
 using namespace std;
 
 SBlock::SBlock(bool isCurr) : Block{isCurr}, shape{'T'} {
-    relPos = { {-1, 1}, {-1, 2}, {0, 0}, {0, 1} }  // Imagine the bottom left was {0, 0}
+    relPos = { {-1, 1}, {-1, 2}, {0, 0}, {0, 1} };  // Imagine the bottom left was {0, 0}
 }
 
-vector <pair <int, int> > SBlock::getRelPos() const override {
+vector <pair <int, int> > SBlock::getRelPos() const {
     return relPos;
 }
 
-char SBlock::getShape() const override { return 'T'; }
+char SBlock::getShape() const { return 'T'; }
 
 void SBlock::rotate(string dir) {
     switch(rotated) {
@@ -26,6 +26,6 @@ void SBlock::rotate(string dir) {
 //essentially, when you add the block to the board, just get its Cell values by adding <3, 0>,
 //or whatever the coordinate of the current bottom left is on the board (absRow, absCol).
 
-unique_ptr<Block> clone() const override {
+unique_ptr<Block> SBlock::clone() const {
     return std::make_unique<SBlock>(*this);
 }

@@ -3,14 +3,14 @@
 using namespace std;
 
 TBlock::TBlock(bool isCurr) : Block{isCurr}, shape{'T'} {
-    relPos = { {-1, 0}, {-1, 1}, {-1, 2}, {0, 1} }  // Imagine the bottom left was {0, 0}
+    relPos = { {-1, 0}, {-1, 1}, {-1, 2}, {0, 1} };  // Imagine the bottom left was {0, 0}
 }
 
-vector <pair <int, int> > TBlock::getRelPos() const override {
+vector <pair <int, int> > TBlock::getRelPos() const {
     return relPos;
 }
 
-char TBlock::getShape() const override { return 'T'; }
+char TBlock::getShape() const { return 'T'; }
 
 void TBlock::rotate(string dir) {
     switch(rotated) {
@@ -56,6 +56,6 @@ void TBlock::rotate(string dir) {
 //essentially, when you add the block to the board, just get its Cell values by adding <3, 0>,
 //or whatever the coordinate of the current bottom left is on the board (absRow, absCol).
 
-unique_ptr<Block> clone() const override {
+unique_ptr<Block> TBlock::clone() const {
     return std::make_unique<TBlock>(*this);
 }
