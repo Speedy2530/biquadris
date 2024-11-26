@@ -2,7 +2,7 @@
 
 using namespace std;
 
-ZBlock::ZBlock(bool isCurr) : Block{isCurr}, shape{'T'} {
+ZBlock::ZBlock(bool isCurr) : Block{isCurr}, shape{'Z'} {
     relPos = { {-1, 0}, {-1, 1}, {0, 1}, {0, 2} };  // Imagine the bottom left was {0, 0}
 }
 
