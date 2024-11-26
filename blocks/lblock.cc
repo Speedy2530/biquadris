@@ -10,7 +10,7 @@ vector <pair <int, int> > LBlock::getRelPos() const {
     return relPos;
 }
 
-char LBlock::getShape() const { return 'T'; }
+char LBlock::getShape() const { return 'L'; }
 
 void LBlock::rotate(string dir) {
     switch(rotated) {

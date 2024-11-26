@@ -10,7 +10,7 @@ vector <pair <int, int> > ZBlock::getRelPos() const {
     return relPos;
 }
 
-char ZBlock::getShape() const { return 'T'; }
+char ZBlock::getShape() const { return 'Z'; }
 
 void ZBlock::rotate(string dir) {
     switch(rotated) {

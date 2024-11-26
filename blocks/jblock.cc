@@ -10,7 +10,7 @@ vector <pair <int, int> > JBlock::getRelPos() const {
     return relPos;
 }
 
-char JBlock::getShape() const { return 'T'; }
+char JBlock::getShape() const { return 'J'; }
 
 void JBlock::rotate(string dir) {
     switch(rotated) {

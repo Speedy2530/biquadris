@@ -10,7 +10,7 @@ vector <pair <int, int> > SBlock::getRelPos() const {
     return relPos;
 }
 
-char SBlock::getShape() const { return 'T'; }
+char SBlock::getShape() const { return 'S'; }
 
 void SBlock::rotate(string dir) {
     switch(rotated) {
