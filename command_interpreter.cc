@@ -1,86 +1,69 @@
+#include "command_interpreter.h"
 #include <iostream>
-#include <string>
+#include <algorithm>
 
 using namespace std;
 
-void CommandInterpreter::callMethod(string command, string file = "") {
-	string command_call;
+void CommandInterpreter::callMethod(string command, string file) {
+    // Normalize the command to lowercase
+    transform(command.begin(), command.end(), command.begin(), ::tolower);
 
-	// check if command is correct (in commands)
-	for (string correct_command : commands) {
-		if (command == correct_command) {
-			command_call = command;
-		}
-	}
-
-	switch (command) {
-		case "left": case "l": case "lef":
-			//
-			break;
-		case "right": case "r": case "ri":
-			//
-			break;
-		case "down": case "dn": case "do":
-			//
-			break;
-		case "clockwise": case "c": case "cl":
-			//
-			break;
-		case "counterclockwise": case "cc": case "co":
-			//
-			break;
-		case "drop": case "dp": case "dr":
-			//
-			break;
-		case "levelup": case "lu":
-			//
-			break;
-		case "leveldown": case "ld":
-			//
-			break;
-		case "norandom": case "nr": case "no":
-			//
-			break;
-		case "random": case "rm": case "ra":
-			//
-			break;
-		case "sequence": case "s": case "se":
-			//
-			break;
-		case "I":
-			//
-			break;
-		case "J":
-			//
-			break;
-		case "L":
-			//
-			break;
-		case "O":
-			//
-			break;
-		case "S":
-			//
-			break;
-		case "Z":
-			//
-			break;
-		case "T":
-			//
-			break;
-		case "restart": case "re":
-			//
-			break;
-		default:
-			cout << "Incorrect Command. Refer to the documentation." << endl;
-
-	}
+    // Match full commands or abbreviations
+    if (command == "left" || command == "l" || command == "lef") {
+        // Handle "left" command
+    } else if (command == "right" || command == "r" || command == "ri") {
+        // Handle "right" command
+    } else if (command == "down" || command == "dn" || command == "do") {
+        // Handle "down" command
+    } else if (command == "clockwise" || command == "c" || command == "cl") {
+        // Handle "clockwise" command
+    } else if (command == "counterclockwise" || command == "cc" || command == "co") {
+        // Handle "counterclockwise" command
+    } else if (command == "drop" || command == "dp" || command == "dr") {
+        // Handle "drop" command
+    } else if (command == "levelup" || command == "lu") {
+        // Handle "levelup" command
+    } else if (command == "leveldown" || command == "ld") {
+        // Handle "leveldown" command
+    } else if (command == "norandom" || command == "nr" || command == "no") {
+        // Handle "norandom" command
+    } else if (command == "random" || command == "rm" || command == "ra") {
+        // Handle "random" command
+    } else if (command == "sequence" || command == "s" || command == "se") {
+        // Handle "sequence" command
+    } else if (command == "i" || command == "j" || command == "l" || command == "o" || command == "s" || command == "z" || command == "t") {
+        // Handle block type commands (I, J, L, etc.)
+    } else if (command == "restart" || command == "re") {
+        // Handle "restart" command
+    } else {
+        cout << "Incorrect Command. Refer to the documentation." << endl;
+    }
 }
 
 string CommandInterpreter::fullCommandName(string command) {
-
+    // Map abbreviated commands to full names
+    if (command == "l" || command == "lef") return "left";
+    if (command == "r" || command == "ri") return "right";
+    if (command == "dn" || command == "do") return "down";
+    if (command == "c" || command == "cl") return "clockwise";
+    if (command == "cc" || command == "co") return "counterclockwise";
+    if (command == "dp" || command == "dr") return "drop";
+    if (command == "lu") return "levelup";
+    if (command == "ld") return "leveldown";
+    if (command == "nr" || command == "no") return "norandom";
+    if (command == "rm" || command == "ra") return "random";
+    if (command == "s" || command == "se") return "sequence";
+    if (command == "re") return "restart";
+    return command; // Return as-is if no match
 }
 
-int CommandInterpreter::getMultipler(string command) {
-
+int CommandInterpreter::getMultiplier(string command) {
+    // Extract a multiplier (e.g., "2left" -> 2)
+    int multiplier = 1;
+    size_t pos = 0;
+    while (pos < command.length() && isdigit(command[pos])) {
+        multiplier = multiplier * 10 + (command[pos] - '0');
+        ++pos;
+    }
+    return multiplier > 1 ? multiplier : 1; // Default to 1 if no multiplier
 }
