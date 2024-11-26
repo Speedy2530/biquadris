@@ -3,7 +3,7 @@
 
 using namespace std;
 
-virtual void Block::print() const {
+void Block::print() const {
     char grid[4][4] = { {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '} };
 
     for (const auto& pos : relPos) {
