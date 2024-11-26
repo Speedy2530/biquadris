@@ -31,7 +31,7 @@ bool Cell::isBlind() const {
 	return blind;
 }
 
-void Cell::setFill(char s) {
+void Cell::fill(char s) {
 	shape = s;
 }
 
