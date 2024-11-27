@@ -2,7 +2,7 @@
 
 using namespace std;
 
-OBlock::OBlock(bool isCurr) : Block{isCurr}, shape{'O'} {
+OBlock::OBlock(bool isCurr) : Block{isCurr, 0, false, 0}, shape{'O'} {
     relPos = { {0, 0}, {0, 1}, {-1, 0}, {-1, 1} };
 }
 

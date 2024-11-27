@@ -47,7 +47,6 @@ class Board {
         void clearLines();
         void calculateScore(int linesCleared);
         int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs);
-        void reset();
 
     public:
         static const int TOTAL_ROWS = 18; // 15 playable rows + 3 reserve rows
@@ -76,13 +75,14 @@ class Board {
         void updateHiScore();
 
         int getCurrBlockID() const;
-        vector < unique_ptr <Block> > getBlocks() const;
+        const vector < unique_ptr <Block> > &getBlocks() const;
 
         // Display
         void display() const;
 
         // Game State
         bool isGameOver() const;
+        void reset();
 };
 
 #endif 

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-IBlock::IBlock(bool isCurr) : Block{isCurr}, shape{'I'} {
+IBlock::IBlock(bool isCurr) : Block{isCurr, 0, false, 0}, shape{'I'} {
     relPos = { {0, 0}, {0, 1}, {0, 2}, {0, 3} };  // Imagine the bottom left was {0, 0}
 }
 

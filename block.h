@@ -21,8 +21,8 @@ class Block {
         static int idCounter;
 
     public:
-        Block(bool isCurr = false, int level = -1, bool isHeavy = false, int rot = 0)
-            : currBlock(isCurr), blockLevel{level}, heavy(isHeavy), rotated(rot), blockID{idCounter++} {}
+	Block(bool isCurr, int level, bool isHeavy, int rot)
+    	: currBlock(isCurr), heavy(isHeavy), locked(false), rotated(rot), blockID(idCounter++), blockLevel(level) {}
 
         virtual vector <pair <int, int> > getRelPos() const = 0;
         virtual char getShape() const = 0;
@@ -44,6 +44,5 @@ class Block {
         virtual ~Block() = default;
 };
 
-int Block::idCounter = 0;
 
 #endif

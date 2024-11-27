@@ -5,7 +5,8 @@
 
 using namespace std;
 
-Cell::Cell(int r, int c, char s, int id) : row{r}, col{c}, shape{s}, blockID{id}, locked{false}, blind{false} {}
+Cell::Cell(int r, int c, char s, int id)
+    : row{r}, col{c}, shape{s}, locked{false}, blind{false}, blockID{id} {}
 
 int Cell::getRow() const {
 	return row;

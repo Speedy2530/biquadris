@@ -19,3 +19,5 @@ void Block::print() const {
         cout << endl;
     }
 }
+
+int Block::idCounter = 0;

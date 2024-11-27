@@ -2,7 +2,7 @@
 
 using namespace std;
 
-AsteriskBlock::AsteriskBlock(bool isCurr) : Block{isCurr}, shape{'*'} {
+AsteriskBlock::AsteriskBlock(bool isCurr) : Block{isCurr, 0, false, 0}, shape{'*'} {
     relPos = { {0, 5} };
 }
 

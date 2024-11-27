@@ -1,36 +1,73 @@
+#include "board.h"
+#include "./levels/level0.h"
+#include "command_interpreter.h"
 #include <iostream>
 #include <memory>
-#include "./blocks/jblock.h"
-#include "command_interpreter.h"
+#include <string>
 
 using namespace std;
 
 int main() {
-    // Initialize the command interpreter and a block (e.g., IBlock)
-    CommandInterpreter interpreter;
-    unique_ptr<Block> block = make_unique<JBlock>(true);
+    unique_ptr<Level> level0 = make_unique<Level0>("sequence1.txt");
 
-    cout << "Welcome to Biquadris Block Tester!" << endl;
-    cout << "Enter commands to rotate and manipulate the block. Type EOF (Ctrl+D) to exit." << endl;
+    bool textMode = true;
+    string seqFile = "sequence1.txt";
+    Board board(move(level0), textMode, seqFile);
+
+    CommandInterpreter interpreter;
+
+    cout << "Welcome to Biquadris!" << endl;
+    board.display();
 
     string command;
-    while (true) {
-        cout << "Current Block:" << endl;
-        block->print();
 
-        cout << "Enter command: ";
-        if (!(cin >> command)) {  // Detect EOF or input error
-            cout << "Exiting program. Goodbye!" << endl;
-            break;
+    // Main game loop
+    while (!board.isGameOver()) {
+        cout << "\nEnter command: ";
+
+        pair<int, string> nextCommand = interpreter.getNextCommand();
+        string fullCommand = nextCommand.second;
+
+	cout << "COMMAND: " << fullCommand << endl;
+        // Process commands
+        if (fullCommand == "left") {
+            board.moveBlockLeft();
+        } else if (fullCommand == "right") {
+            board.moveBlockRight();
+        } else if (fullCommand == "down") {
+            board.moveBlockDown();
+        } else if (fullCommand == "drop") {
+            board.dropBlock();
+        } else if (fullCommand == "clockwise") {
+            board.rotateBlock("clockwise");
+        } else if (fullCommand == "counterclockwise") {
+            board.rotateBlock("counterclockwise");
+        } else if (fullCommand == "levelup") {
+            board.levelUp();
+        } else if (fullCommand == "leveldown") {
+            board.levelDown();
+        } else if (fullCommand == "restart") {
+            board.reset();
+        } else if (fullCommand == "i" || fullCommand == "j" || fullCommand == "l" ||
+                   fullCommand == "o" || fullCommand == "s" || fullCommand == "z" ||
+                   fullCommand == "t") {
+            char blockType = fullCommand[0];
+            board.forceBlock(blockType);
+        } else if (fullCommand == "norandom") {
+            cout << "Norandom command is not implemented yet." << endl;
+        } else if (fullCommand == "random") {
+            cout << "Random command is not implemented yet." << endl;
+        } else if (fullCommand == "sequence") {
+            cout << "Sequence command is not implemented yet." << endl;
+        } else {
+            cout << "Invalid command. Please try again." << endl;
         }
 
-        // Process command using CommandInterpreter
-        interpreter.callMethod(command, *block);
-
-        cout << "Block After Command:" << endl;
-        block->print();
+        // Display updated board state
+        board.display();
     }
 
+    cout << "Game over! Final score: " << board.getScore() << endl;
     return 0;
 }
 
