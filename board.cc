@@ -1,20 +1,22 @@
 #include "board.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-Board:Board(unique_ptr<Level> initialLevel, bool textMode) :
+Board::Board(unique_ptr<Level> initialLevel, bool textMode) :
     grid{TOTAL_ROWS, vector<Cell>(TOTAL_COLS)},
     currLevel{move(initialLevel)}, 
     origRow{3},
-    origCol{0}.
+    origCol{0},
     score{0},
     hiScore{0},
     textMode{textMode},
     gameOver{false},
     currBlockID{-1},
     linesCleared{0},
-    currLevelNum{0}
+    currLevelNum{0},
+    blocks{100, nullptr}
     {
         nextBlock = currLevel->makeNextBlock();
         newBlock();
@@ -22,11 +24,13 @@ Board:Board(unique_ptr<Level> initialLevel, bool textMode) :
 
 
 // Helpers
-bool Board::fillCells() {
+void Board::fillCells() {
+    if (currBlockID == -1 || currBlockID >= blocks.size() || !blocks[currBlockID]) return;
+
     for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
         int absRow = origRow + relRow;
         int absCol = origCol + relCol;
-        grid[absRow][absCol].fill(currBlock->getShape(), currBlockID);
+        grid[absRow][absCol].fill(blocks[currBlockID]->getShape(), currBlockID);
     }
 }
 
@@ -44,15 +48,15 @@ int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) 
 // row and col in the params represent the "bottom left" position of the block on the board
 bool Board::canPlaceBlock(const Block& block, int row, int col) const {
     for (const auto& [relRow, relCol] : block.getRelPos()) {
-        int r = row + relRow:
+        int r = row + relRow;
         int c = col + relCol;
 
         // if out of bounds or conflicting space
         if (r < 0 || r >= TOTAL_ROWS || c < 0 || c >= TOTAL_COLS) return false; 
         if (grid[r][c].isFilled()) return false;
-
-        return true;
     }
+
+    return true;
 }
 
 // bool Board::placeBlock(unique_ptr<Block> block, int row, int col) {
@@ -81,20 +85,23 @@ void Board::newBlock() {
     blocks[newBlockID] = move(nextBlock);
     currBlockID = newBlockID; 
 
-    originRow = 3;
-    originCol = 0;
+    origRow = 3;
+    origCol = 0;
 
-    fillCells(); // should I do this here?
-    if (!placeBlock(*blocks[newBlockID], originRow, originCol)) gameOver = true;
+    if (!canPlaceBlock(*blocks[newBlockID], origRow, origCol)) {
+        gameOver = true;
+        return;
+    }
 
-    nextBlock = currentLevel->makeNextBlock();
+    fillCells();
+    nextBlock = currLevel->makeNextBlock();
 }
 
 
 bool Board::moveBlockLeft() {
     if (currBlockID == -1) return false;
 
-    newCol = origCol - 1;
+    int newCol = origCol - 1;
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
@@ -112,9 +119,9 @@ bool Board::moveBlockLeft() {
 bool Board::moveBlockRight() {
     if (currBlockID == -1) return false;
 
-    newCol = origCol + 1;
+    int newCol = origCol + 1;
 
-    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
+    removeBlockFromGrid(currBlockID, origRow, origCol);
 
     if (!canPlaceBlock(*blocks[currBlockID], origRow, newCol)) {
         fillCells();
@@ -130,9 +137,9 @@ bool Board::moveBlockRight() {
 bool Board::moveBlockDown() {
     if (currBlockID == -1) return false;
 
-    newRow = origRow + 1;
+    int newRow = origRow + 1;
 
-    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
+    removeBlockFromGrid(currBlockID, origRow, origCol);
 
     if (!canPlaceBlock(*blocks[currBlockID], newRow, origCol)) {
         // Can no longer go down, lock the block
@@ -152,7 +159,7 @@ bool Board::moveBlockDown() {
 bool Board::rotateBlock(string dir) {
     if (currBlockID == -1) return false;
 
-    removeBlockFromGrid(*blocks[currBlockID], origRow, origCol);
+    removeBlockFromGrid(currBlockID, origRow, origCol);
 
     blocks[currBlockID]->rotate(dir);
 
@@ -194,24 +201,12 @@ void Board::lockBlock() {
 void Board::removeBlockFromGrid(int blockID, int row, int col) {
     if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
 
-    for (const auto& [relRow, relCol] : blocks[blockID].getRelPos()) {
+    for (const auto& [relRow, relCol] : blocks[blockID]->getRelPos()) {
         int absRow = row + relRow;
         int absCol = col + relCol;
         grid[absRow][absCol].clear();
     }
 }
-
-// // Permanently remove the block from the grid and reset the unique_ptr
-// void Board::removeBlockPermanently(int blockID, int row, int col) {
-//     if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
-
-//     removeBlockFromGrid(blockID);
-//     blocks[blockID].reset();
-//     freeBlockIDs.push_back(blockID);
-
-//     if (currBlock == blockID) currBlock = -1;
-// }
-
 
 void Board::clearLines() {
     for (int r = 0; r < TOTAL_ROWS; r++) {
@@ -231,7 +226,7 @@ void Board::clearLines() {
             clearedBlockIDs.insert(clearedBlockIDs.end(), blockIDs.begin(), blockIDs.end());
 
             for (int c = 0; c < TOTAL_COLS; c++) {
-                grid[r][c].clear()
+                grid[r][c].clear();
             }
 
             for (int rowToMove = r; rowToMove < TOTAL_ROWS - 1; ++rowToMove) {
@@ -256,9 +251,9 @@ void Board::clearLines() {
         for (const auto& [blockID, count] : blockCount) {
 
             // If cleared block
-            if (count == 4 || blocks[blockID].getShape() == '*') {
+            if (count == 4 || blocks[blockID]->getShape() == '*') {
 
-                int lvl = blocks[blockID].getBlockLevel;
+                int lvl = blocks[blockID]->getBlockLevel();
                 score += (lvl + 1) * (lvl + 1); // add level
 
                 // remove the relevant blockID instances from the clearedBlockIDs list
@@ -292,21 +287,21 @@ void Board::calculateScore(int linesCleared) {
 void Board::levelUp() {
     if (currLevelNum < 4) {
         currLevelNum++;
-        cout << "Level Up! New Level: " << currentLevelNum << endl;
+        cout << "Level Up! New Level: " << currLevelNum << endl;
     }
 
     switch (currLevelNum) {
         case 0:
-            currentLevel = make_unique<Level1>();
+            currLevel = make_unique<Level1>();
             break;
         case 1:
-            currentLevel = make_unique<Level2>();
+            currLevel = make_unique<Level2>();
             break;
         case 2:
-            currentLevel = make_unique<Level3>();
+            currLevel = make_unique<Level3>();
             break;
         case 3:
-            currentLevel = make_unique<Level4>();
+            currLevel = make_unique<Level4>();
             break;
         default:
             cout << "No higher level defined. Staying at Level " << currLevelNum << endl;
@@ -317,21 +312,21 @@ void Board::levelUp() {
 void Board::levelDown() {
     if (currLevelNum != 0) {
         currLevelNum--;
-        cout << "Level Down! New Level: " << currentLevelNum << endl;
+        cout << "Level Down! New Level: " << currLevelNum << endl;
     }
 
     switch (currLevelNum) {
         case 1:
-            currentLevel = make_unique<Level0>();
+            currLevel = make_unique<Level0>();
             break;
         case 2:
-            currentLevel = make_unique<Level1>();
+            currLevel = make_unique<Level1>();
             break;
         case 3:
-            currentLevel = make_unique<Level2>();
+            currLevel = make_unique<Level2>();
             break;
         case 4:
-            currentLevel = make_unique<Level3>();
+            currLevel = make_unique<Level3>();
             break;
         default:
             cout << "No Lower level defined. Staying at Level " << currLevelNum << endl;
@@ -358,7 +353,7 @@ void Board::display() const {
 
     // Print score and hi score
     cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
-    cout << nextBlock->print();
+    nextBlock->print();
 }
 
 
@@ -372,16 +367,16 @@ void Board::reset() {
 
     score = 0;
     gameOver = false;
-    blocks.clear()
-    freeBlockIDs.clear()
-    clearedIDs.clear()
-    currBlock = -1;
+    blocks.clear();
+    freeBlockIDs.clear();
+    clearedBlockIDs.clear();
+    currBlockID = -1;
     nextBlock = nullptr;
     newBlock();
 }
 
 
-int Board::getCurrBlockID() { return currBlockID; }
+int Board::getCurrBlockID() const { return currBlockID; }
 
 int Board::getScore() const { return score; }
 
@@ -389,4 +384,4 @@ int Board::getHiScore() const { return hiScore; }
 
 void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
 
-bool Board::isGameOver() const return gameOver;
+bool Board::isGameOver() const { return gameOver; }

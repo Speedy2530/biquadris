@@ -8,7 +8,7 @@
 #include "cell.h"
 #include "block.h"
 #include "level.h"
-#include "cell.h"
+#include "levels/all_levels.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ class Board {
         unique_ptr<Level> currLevel;
         unique_ptr<Block> nextBlock;
 
-        vector < shared_ptr <Block> > blocks; // list of blocks with index as IDs
+        vector < unique_ptr <Block> > blocks; // list of blocks with index as IDs
         vector <int> freeBlockIDs; // free IDs within the blocks vector for reuse
         int currBlockID;
 
@@ -34,10 +34,10 @@ class Board {
         bool gameOver;
 
         // Helpers
+        void fillCells();
         bool canPlaceBlock(const Block& block, int row, int col) const;
         void lockBlock();
-        void removeBlockFromGrid(int blockID);
-        void removeBlockPermanently(int blockID);
+        void removeBlockFromGrid(int blockID, int row, int col);
         void clearLines();
         void calculateScore(int linesCleared);
         int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs);
@@ -55,7 +55,7 @@ class Board {
         bool moveBlockLeft();
         bool moveBlockRight();
         bool moveBlockDown();
-        bool rotateBlock(RotationDirection direction);
+        bool rotateBlock(string dir);
         bool dropBlock();
         void newBlock();
 
