@@ -3,7 +3,7 @@
 // using namespace std;
 
 Level::Level(int levelNumber, const vector<double>& probabilities)
-    : isRand(false), currIdx(0), probs(probabilities) {}
+    : isRand{false}, currIdx{0}, probs{probabilities}, levelNum{levelNumber}  {}
 
 void Level::readFile(const string& file) {
     ifstream infile(file);

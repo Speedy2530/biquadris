@@ -4,6 +4,7 @@ gameController::gameController() :
     player1Turn{true} {
         player1 = make_unique<Board>();
         player2 = make_unique<Board>();
+        curPlayer = move(player1);
     }
 
 
@@ -12,7 +13,6 @@ void gameController::playTurn() {
     int multipler = curCommand.first;
     string command = curCommand.second;
 
-    unique_ptr<Board> curPlayer = (player1Turn) ? move(player1) : move(player2);
     if (player1Turn) {
         switch (p1Effect) {
             case 'h':
@@ -59,9 +59,9 @@ void gameController::playTurn() {
             curPlayer->levelDown();
         } else if (command == "restart") {
             curPlayer.reset();
-        } else if (command == "i" || command == "j" || command == "l" ||
-                   command == "o" || command == "s" || command == "z" ||
-                   command == "t") {
+        } else if (command == "I" || command == "J" || command == "L" ||
+                   command == "O" || command == "S" || command == "Z" ||
+                   command == "T") {
             char blockType = command[0];
             curPlayer->forceBlock(blockType);
         } else if (command == "norandom") {
@@ -73,31 +73,46 @@ void gameController::playTurn() {
         } else {
             cout << "Invalid command. Please try again." << endl;
         }
-
-        if (player1Turn) {
-            player1 = move(curPlayer);
-        }
-        else {
-            player2 = move(curPlayer);
-        }
         curPlayer->display();
 
         if(curPlayer->isGameOver()){
             restartGame();
         }
 
+        if (curPlayer->getBlocks()[curPlayer->getCurrBlockID()]->isLocked()) {
+            if (player1Turn) {
+                if (p1Effect == 'b') {
+                    curPlayer->setCellsBlind(false);
+                }
+                p1Effect = 'N';
+                player1 = move(curPlayer);
+            }
+            else{
+                if (p2Effect == 'b') {
+                    curPlayer->setCellsBlind(false);
+                }
+                p2Effect = 'N';
+                player2 = move(curPlayer);
+            }
+            player1Turn != player1Turn;
+        }
 
-        if ()
-        player1Turn != player1Turn;
+        playTurn();
     }
 
 
 void gameController::restartGame() {
+     if (player1Turn) {
+        player1 = move(curPlayer);
+    } else {
+        player2 = move(curPlayer);
+    }
+
     player1->reset();
     player2->reset();
-    p1Effect = '0';
-    p1forceBlock = '0';
-    p2Effect = '0';
-    p2forceBlock = '0';
+    p1Effect = 'N';
+    p1forceBlock = 'N';
+    p2Effect = 'N';
+    p2forceBlock = 'N';
     player1Turn = true;
 }
