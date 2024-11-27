@@ -58,6 +58,7 @@ class Board {
         bool rotateBlock(string dir);
         bool dropBlock();
         void newBlock();
+        void forceBlock();
 
         // Levels
         void levelUp();

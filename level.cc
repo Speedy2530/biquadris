@@ -24,15 +24,10 @@ void Level::readFile(const string& file) {
     }
 }
 
-unique_ptr<Block> Level::makeBlockFromFile() {
-    if (seq.empty()) {
-        return nullptr;
-    }
-
-    char blockType = seq[currIdx];
+unique_ptr<Block> Level::blockFromShape(char shape) {
     unique_ptr<Block> block = nullptr;
 
-    switch(blockType) {
+    switch(shape) {
         case 'I':
             block = make_unique<IBlock>(levelNum);
             break;
@@ -55,9 +50,20 @@ unique_ptr<Block> Level::makeBlockFromFile() {
             block = make_unique<ZBlock>(levelNum);
             break;
         default:
-            cerr << "Warning: Unknown block type '" << blockType << "' in sequence." << endl;
+            cerr << "Warning: Unknown block type '" << shape << "' in sequence." << endl;
             break;
     }
+    return block;
+}
+
+unique_ptr<Block> Level::makeBlockFromFile() {
+    if (seq.empty()) {
+        return nullptr;
+    }
+
+    char blockType = seq[currIdx % seq.size()];
+    currIdx++;
+    return blockFromShape(blockType);
 }
 
 
