@@ -12,6 +12,10 @@
 
 using namespace std;
 
+class Cell;
+class Block;
+class Level;
+
 class Board {
     private:
         vector <vector <Cell> > grid; // 18x11 grid
@@ -24,10 +28,12 @@ class Board {
 
         vector <int> clearedBlockIDs; // list of block IDs that have been cleared (1 per cell)
 
+        string seqFile;
         int origRow; 
         int origCol; 
         int score;
         int hiScore;
+        int blocksSinceClear;
         int linesCleared;
         int currLevelNum;
         bool textMode;
@@ -40,14 +46,14 @@ class Board {
         void removeBlockFromGrid(int blockID, int row, int col);
         void clearLines();
         void calculateScore(int linesCleared);
-        int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs);
+        int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) const;
         void reset();
 
     public:
         static const int TOTAL_ROWS = 18; // 15 playable rows + 3 reserve rows
         static const int TOTAL_COLS = 11;
 
-        Board(unique_ptr<Level> initialLevel, bool textMode = false);
+        Board(unique_ptr<Level> initialLevel, bool textMode = false, string seqFile = "");
         ~Board() = default;
 
         // Block Management
@@ -55,7 +61,7 @@ class Board {
         bool moveBlockLeft();
         bool moveBlockRight();
         bool moveBlockDown();
-        bool rotateBlock(string dir);
+        bool rotateBlock(const string& dir);
         bool dropBlock();
         void newBlock();
         void forceBlock(char s);
