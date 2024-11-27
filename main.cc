@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory>
-#include "./blocks/zblock.h"
+#include "./blocks/jblock.h"
 #include "command_interpreter.h"
 
 using namespace std;
@@ -8,7 +8,7 @@ using namespace std;
 int main() {
     // Initialize the command interpreter and a block (e.g., IBlock)
     CommandInterpreter interpreter;
-    unique_ptr<Block> block = make_unique<ZBlock>(true);
+    unique_ptr<Block> block = make_unique<JBlock>(true);
 
     cout << "Welcome to Biquadris Block Tester!" << endl;
     cout << "Enter commands to rotate and manipulate the block. Type EOF (Ctrl+D) to exit." << endl;

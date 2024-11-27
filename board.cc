@@ -5,29 +5,32 @@
 using namespace std;
 
 Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
-    grid{TOTAL_ROWS, vector<Cell>(TOTAL_COLS)},
-    currLevel{move(initialLevel)}, 
-    origRow{3},
-    origCol{0},
-    score{0},
-    hiScore{0},
-    textMode{textMode},
-    gameOver{false},
-    currBlockID{-1},
-    blocksSinceClear{0},
-    linesCleared{0},
-    currLevelNum{0},
-    seqFile{seqFile},
-    blocks{100, nullptr},
-    {
-        nextBlock = currLevel->makeNextBlock();
-        newBlock();
+    grid(TOTAL_ROWS, vector<Cell>(TOTAL_COLS)),
+    currLevel(move(initialLevel)),
+    nextBlock(nullptr),
+    blocks(100),
+    freeBlockIDs(),
+    currBlockID(-1),
+    gameOver(false),
+    clearedBlockIDs(),
+    seqFile(seqFile),
+    origRow(3),
+    origCol(0),
+    score(0),
+    hiScore(0),
+    blocksSinceClear(0),
+    linesCleared(0),
+    currLevelNum(0),
+    textMode(textMode)
+{
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+    newBlock();
 }
 
 
 // Helpers
 void Board::fillCells() {
-    if (currBlockID == -1 || currBlockID >= blocks.size() || !blocks[currBlockID]) return;
+    if (currBlockID == -1 || currBlockID >= static_cast<int>(blocks.size()) || !blocks[currBlockID]) return;
 
     for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
         int absRow = origRow + relRow;
@@ -118,6 +121,10 @@ bool Board::moveBlockLeft() {
 
     origCol = newCol;
     fillCells();
+    if (blocks[currBlockID]->isHeavy()) {
+        moveBlockDown();
+        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
+    }
 
     return true;
 }
@@ -135,7 +142,12 @@ bool Board::moveBlockRight() {
     }
     
     origCol = newCol;
+
     fillCells();
+    if (blocks[currBlockID]->isHeavy()) {
+        moveBlockDown();
+        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
+    }
 
     return true;
 }
@@ -158,6 +170,14 @@ bool Board::moveBlockDown() {
 
     origRow = newRow;
     fillCells();
+
+    // edge case
+    if (!canPlaceBlock(*blocks[currBlockID], origRow, origCol+1) && !canPlaceBlock(*blocks[currBlockID], origRow, origCol-1)
+        && !canPlaceBlock(*blocks[currBlockID], origRow-1, origCol)) {
+            lockBlock();
+            clearLines();
+            newBlock();
+    }
 
     return true;
 }
@@ -198,14 +218,13 @@ bool Board::dropBlock() {
 }
 
 void Board::lockBlock() {
-    // The block is already placed on the grid
-    // Update any necessary state if needed
+    blocks[currBlockID]->setLocked(true);
 }
 
 
 // Remove the block from the grid without resetting the unique_ptr
 void Board::removeBlockFromGrid(int blockID, int row, int col) {
-    if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
+    if (blockID < 0 || blockID >= static_cast<int>(blocks.size()) || !blocks[blockID]) return;
 
     for (const auto& [relRow, relCol] : blocks[blockID]->getRelPos()) {
         int absRow = row + relRow;
@@ -264,7 +283,7 @@ void Board::clearLines() {
 
                 // remove the relevant blockID instances from the clearedBlockIDs list
                 clearedBlockIDs.erase(
-                std::remove(clearedBlockIDs.begin(), clearedBlockIDs.end(), blockID),
+                remove(clearedBlockIDs.begin(), clearedBlockIDs.end(), blockID),
                 clearedBlockIDs.end()
                 );
 
@@ -345,7 +364,7 @@ void Board::levelDown() {
 
 
 void Board::display() const {
-    for (int r = TOTAL_ROWS - 1; r >= 0; r--) {
+    for (int r = 0; r < TOTAL_ROWS; r++) {
         cout << "|";
         for (int c = 0; c < TOTAL_COLS; ++c) {
             cout << grid[r][c].getShape();
