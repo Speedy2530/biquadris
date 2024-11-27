@@ -35,7 +35,12 @@ void Board::fillCells() {
     for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
         int absRow = origRow + relRow;
         int absCol = origCol + relCol;
-        grid[absRow][absCol].fill(blocks[currBlockID]->getShape(), currBlockID);
+        if (absRow >= 0 && absRow < TOTAL_ROWS && absCol >= 0 && absCol < TOTAL_COLS) {
+            grid[absRow][absCol].fill(blocks[currBlockID]->getShape(), currBlockID);
+        }
+        else {
+            cerr << "Weird thing in fillCells happening." << endl;
+        }
     }
 }
 
@@ -51,8 +56,13 @@ int Board::getNewBlockID() {
 }
 
 // row and col in the params represent the "bottom left" position of the block on the board
-bool Board::canPlaceBlock(const Block& block, int row, int col) const {
-    for (const auto& [relRow, relCol] : block.getRelPos()) {
+bool Board::canPlaceBlock(int row, int col) const {
+    if (currBlockID == -1 || currBlockID >= static_cast<int>(blocks.size()) || !blocks[currBlockID]) {
+        cerr << "Warning: Invalid currBlockID or blocks[currBlockID] is null." << endl;
+        return false;
+    }
+
+    for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
         int r = row + relRow;
         int c = col + relCol;
 
@@ -93,7 +103,7 @@ void Board::newBlock() {
     origRow = 3;
     origCol = 0;
 
-    if (!canPlaceBlock(*blocks[newBlockID], origRow, origCol)) {
+    if (!canPlaceBlock(origRow, origCol)) {
         gameOver = true;
         return;
     }
@@ -101,6 +111,11 @@ void Board::newBlock() {
     fillCells();
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
     blocksSinceClear++;
+
+    if (!nextBlock) {
+        cerr << "Error: nextBlock is null." << endl;
+        return;
+    }
 }
 
 void Board::forceBlock(char shape) {
@@ -114,7 +129,7 @@ bool Board::moveBlockLeft() {
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
-    if (!canPlaceBlock(*blocks[currBlockID], origRow, newCol)) {
+    if (!canPlaceBlock(origRow, newCol)) {
         fillCells();
         return false;
     }
@@ -130,13 +145,13 @@ bool Board::moveBlockLeft() {
 }
 
 bool Board::moveBlockRight() {
-    if (currBlockID == -1) return false;
+    if (currBlockID == -1 || !blocks[currBlockID]) return false;
 
     int newCol = origCol + 1;
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
-    if (!canPlaceBlock(*blocks[currBlockID], origRow, newCol)) {
+    if (!canPlaceBlock(origRow, newCol)) {
         fillCells();
         return false;
     }
@@ -153,13 +168,13 @@ bool Board::moveBlockRight() {
 }
 
 bool Board::moveBlockDown() {
-    if (currBlockID == -1) return false;
+    if (currBlockID == -1 || !blocks[currBlockID]) return false;
 
     int newRow = origRow + 1;
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
-    if (!canPlaceBlock(*blocks[currBlockID], newRow, origCol)) {
+    if (!canPlaceBlock(newRow, origCol)) {
         // Can no longer go down, lock the block
         fillCells();
         lockBlock();
@@ -172,12 +187,12 @@ bool Board::moveBlockDown() {
     fillCells();
 
     // edge case
-    if (!canPlaceBlock(*blocks[currBlockID], origRow, origCol+1) && !canPlaceBlock(*blocks[currBlockID], origRow, origCol-1)
-        && !canPlaceBlock(*blocks[currBlockID], origRow+1, origCol)) {
-            lockBlock();
-            clearLines();
-            newBlock();
-    }
+    // if (!canPlaceBlock(origRow, origCol+1) && !canPlaceBlock(origRow, origCol-1)
+    //     && !canPlaceBlock(origRow+1, origCol)) {
+    //         lockBlock();
+    //         clearLines();
+    //         newBlock();
+    // }
 
     return true;
 }
@@ -189,7 +204,7 @@ bool Board::rotateBlock(const string& dir) {
 
     blocks[currBlockID]->rotate(dir);
 
-    if (canPlaceBlock(*blocks[currBlockID], origRow, origCol)) {
+    if (canPlaceBlock(origRow, origCol)) {
         fillCells();
 
         return true;
@@ -208,7 +223,7 @@ bool Board::rotateBlock(const string& dir) {
 }
 
 bool Board::dropBlock() {
-    if (currBlockID == -1) return false;
+    if (currBlockID == -1 || !blocks[currBlockID]) return false;
 
     while (moveBlockDown()) {
         // Keep moving down until it can't
@@ -229,7 +244,12 @@ void Board::removeBlockFromGrid(int blockID, int row, int col) {
     for (const auto& [relRow, relCol] : blocks[blockID]->getRelPos()) {
         int absRow = row + relRow;
         int absCol = col + relCol;
-        grid[absRow][absCol].clear();
+        if (absRow >= 0 && absRow < TOTAL_ROWS && absCol >= 0 && absCol < TOTAL_COLS) {
+            grid[absRow][absCol].clear();
+        }
+        else {
+            cerr << "weird thing happening when clearing block from grid" << endl;
+        }
     }
 }
 
@@ -381,7 +401,12 @@ void Board::display() const {
 
     // Print score and hi score
     cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
-    nextBlock->print();
+    
+    if (nextBlock) {
+        nextBlock->print();
+    } else {
+        cout << "No next block available.\n";
+    }
 }
 
 void Board::setCellsBlind(bool isBlind) {
