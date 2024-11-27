@@ -71,11 +71,13 @@ class Board {
         void levelDown();
         void setRandom(bool isRand);
         void setSeed(int seed);
+        void setLevelFile(string file);
 
         // Scoring
         int getScore() const;
         int getHiScore() const;
         void updateHiScore();
+        int getLinesCleared() const;
 
         int getCurrBlockID() const;
         const vector < unique_ptr <Block> > &getBlocks() const;

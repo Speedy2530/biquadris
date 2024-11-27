@@ -4,24 +4,26 @@
 #include "board.h"
 #include "command_interpreter.h"
 #include <memory>
-
-using namespace std;
+#include <cstdlib>
 
 class gameController {
     bool player1Turn;
-    unique_ptr<Board> player1;
-    unique_ptr<Board> player2;
-    unique_ptr<Board> curPlayer;
-    // N means no effect, forceBlock will be checked when initially set
+    std::unique_ptr<Board> player1;
+    std::unique_ptr<Board> player2;
+    Board* curPlayer;  
     char p1Effect, p1forceBlock;
     char p2Effect, p2forceBlock;
     CommandInterpreter interpreter;
-    
-    public:
-        gameController();
-        void playTurn();
-        void restartGame();
 
+public:
+    gameController();
+    void playGame();
+    void restartGame();
+
+private:
+    void applyEffect(Board* player, char effect, char forceBlock);
+    void handlePostDrop();
+    bool isBlockType(const std::string& command);
 };
 
 #endif
