@@ -11,7 +11,7 @@ class GameController {
     bool player1Turn;
     std::unique_ptr<Board> player1;
     std::unique_ptr<Board> player2;
-    Board* curPlayer;
+    shared_ptr<Board> curPlayer;
     char p1Effect, p1forceBlock;
     char p2Effect, p2forceBlock;
     CommandInterpreter interpreter;
@@ -19,7 +19,13 @@ class GameController {
 
 public:
     // Constructor takes a mode flag for display
-    GameController(bool textMode = true);
+    GameController(
+        bool textMode = true,
+        int seed = 0, 
+        string scriptfile1 = "sequence1.txt",
+        string scriptfile2 = "sequence2.txt",
+        int startLevel = 0
+    );
     
     // Destructor to clean up TextDisplay
     ~GameController();
@@ -32,7 +38,7 @@ public:
 
 private:
     // Applies special effects to a player
-    void applyEffect(Board* player, char effect, char forceBlock);
+    void applyEffect(shared_ptr<Board> player, char effect, char forceBlock);
     
     // Handles actions after a block is dropped
     void handlePostDrop();

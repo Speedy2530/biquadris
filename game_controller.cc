@@ -1,24 +1,43 @@
 #include "game_controller.h"
 
-GameController::GameController(bool textMode) :
+GameController::GameController(bool textMode, int seed, string scriptfile1, string scriptfile2,  int startLevel);
     player1Turn(true),
     p1Effect('N'),
     p1forceBlock('N'),
     p2Effect('N'),
     p2forceBlock('N') {
-    
-    // Initialize Level instances for each player
-    std::unique_ptr<Level> level1 = std::make_unique<Level0>("sequence1.txt");
-    std::unique_ptr<Level> level2 = std::make_unique<Level0>("sequence2.txt"); // You can choose different levels
 
-    // Initialize Board instances with the respective Level instances 
-    player1 = std::make_unique<Board>(std::move(level1), textMode, "sequence1.txt");
-    player2 = std::make_unique<Board>(std::move(level2), textMode, "sequence2.txt");
+    unique_ptr<Level> level1 = nullptr;
+    unique_ptr<Level> level2 = nullptr;
     
-    curPlayer = player1.get();
+    switch (startLevel) {
+        case 0:
+            level1 = make_unique<Level0>(scriptfile1);
+            level2 = make_unique<Level0>(scriptfile2);
+        case 1:
+            level1 = make_unique<Level1>(scriptfile1);
+            level2 = make_unique<Level1>(scriptfile2);
+        case 2:
+            level1 = make_unique<Level2>(scriptfile1);
+            level2 = make_unique<Level2>(scriptfile2);
+        case 3:
+            level1 = make_unique<Level3>(scriptfile1);
+            level2 = make_unique<Level3>(scriptfile2);
+        case 4:
+            level1 = make_unique<Level3>(scriptfile1);
+            level2 = make_unique<Level3>(scriptfile2);
+    }
+    
 
-    // Initialize TextDisplay with both boards and the selected mode
-    display = std::make_unique<TextDisplay>(*player1, *player2, textMode);
+    player1 = make_shared<Board>(move(level1), textMode, scriptfile1);
+    player2 = make_shared<Board>(move(level2), textMode, scriptfile2);
+
+    player1->setSeed(seed);
+    player2->setSeed(seed);
+    
+    curPlayer = player1;
+
+    display = make_unique<TextDisplay>(*player1, *player2, textMode);
 }
 
 void GameController::playGame() {
@@ -38,18 +57,42 @@ void GameController::playGame() {
         display->display();
 
         // Get next command
-        std::pair<int, std::string> nextCommand = interpreter.getNextCommand();
-        std::string fullCommand = nextCommand.second;
+        pair<int, string> nextCommand = interpreter.getNextCommand();
+        string fullCommand = nextCommand.second;
         int multiplier = nextCommand.first;
 
-        std::cout << "COMMAND: " << fullCommand << " (x" << multiplier << ")" << std::endl;
+        cout << "COMMAND: " << fullCommand << " (x" << multiplier << ")" << endl;
 
         // Process commands with multipliers
         for (int i = 0; i < multiplier; ++i) {
             if (fullCommand == "left") {
                 curPlayer->moveBlockLeft();
+
+                if (curPlayer->isCurrentBlockLocked()) {
+
+                    handlePostDrop();
+
+                    if (curPlayer->isGameOver()) {
+                        restartGame();
+                        break;  
+                    }
+
+                    break;  
+                }
             } else if (fullCommand == "right") {
                 curPlayer->moveBlockRight();
+
+                if (curPlayer->isCurrentBlockLocked()) {
+
+                    handlePostDrop();
+
+                    if (curPlayer->isGameOver()) {
+                        restartGame();
+                        break;  
+                    }
+
+                    break;  
+                }
             } else if (fullCommand == "down") {
             	curPlayer->moveBlockDown();
 
@@ -69,7 +112,7 @@ void GameController::playGame() {
                 curPlayer->dropBlock();
 
                 if (curPlayer->isGameOver()) {
-                    std::cout << "Game over for current player!" << std::endl;
+                    cout << "Game over for current player!" << endl;
                     restartGame();
                     gameOver = true;
                     break;
@@ -93,20 +136,20 @@ void GameController::playGame() {
                 curPlayer->forceBlock(blockType);
                 break;
             } else if (fullCommand == "norandom") {
-                std::string file;
-                std::cin >> file;
+                string file;
+                cin >> file;
                 curPlayer->setLevelFile(file);
                 break;
             } else if (fullCommand == "random") {
                 curPlayer->setRandom(true);
                 break;
             } else if (fullCommand == "sequence") {
-                std::string file;
-                std::cin >> file;
+                string file;
+                cin >> file;
                 interpreter.readFile(file);
                 break;
             } else {
-                std::cout << "Invalid command. Please try again." << std::endl;
+                cout << "Invalid command. Please try again." << endl;
                 break;
             }
 
@@ -132,11 +175,11 @@ void GameController::playGame() {
     }
 
     // Display final game state
-    std::cout << "Game over! Final scores:" << std::endl;
+    cout << "Game over! Final scores:" << endl;
     display->display();
 }
 
-void GameController::applyEffect(Board* player, char effect, char forceBlock) {
+void GameController::applyEffect(shared_ptr<Board> player, char effect, char forceBlock) {
     switch (effect) {
         case 'h':
             player->getBlocks()[player->getCurrBlockID()]->setHeavy(true);
@@ -171,7 +214,7 @@ void GameController::handlePostDrop() {
     player1Turn = !player1Turn;
 }
 
-bool GameController::isBlockType(const std::string& command) {
+bool GameController::isBlockType(const string& command) {
     return command == "I" || command == "J" || command == "L" ||
            command == "O" || command == "S" || command == "Z" ||
            command == "T";
@@ -185,7 +228,7 @@ void GameController::restartGame() {
     p2Effect = 'N';
     p2forceBlock = 'N';
     player1Turn = true;
-    curPlayer = player1.get();
+    curPlayer = player1;
 }
 
 GameController::~GameController() = default;

@@ -3,27 +3,36 @@
 #include <memory>
 #include <string>
 
-int main(int argc, char* argv[]) {
-    bool textMode = true; // Default to text mode
+#include <iostream>
+#include <string>
 
-    // Optional: Accept a command-line argument to set display mode
-    if (argc > 1) {
-        std::string modeArg = argv[1];
-        if (modeArg == "graphics" || modeArg == "xwindow") {
-            textMode = false;
-        } else if (modeArg == "text") {
+int main(int argc, char* argv[]) {
+    bool textMode = false; 
+    int seed = 0;          
+    string scriptfile1 = "sequence1.txt"; 
+    string scriptfile2 = "sequence2.txt"; 
+    int startLevel = 0;    
+
+
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-text") {
             textMode = true;
-        } else {
-            std::cout << "Unknown mode: " << modeArg << ". Defaulting to text mode." << std::endl;
+        } else if (arg == "-seed") {
+            seed = std::stoi(argv[++i]);
+        } else if (arg == "-scriptfile1") {
+            scriptfile1 = argv[++i];
+        } else if (arg == "-scriptfile2") {
+            scriptfile2 = argv[++i];
+        } else if (arg == "-startlevel") {
+            startLevel = std::stoi(argv[++i]);
         }
     }
 
-    // Initialize GameController with the selected display mode
-    GameController controller(textMode);
-
-    // Start the game loop
+    GameController controller(textMode, seed, scriptfile1, scriptfile2, startLevel);
     controller.playGame();
 
     return 0;
 }
+
 
