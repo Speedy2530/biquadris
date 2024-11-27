@@ -86,7 +86,7 @@ int CommandInterpreter::getMultiplier(const string& command) {
     }
 
     // If no digits were found, default to 1
-    return (multiplier > 0) ? multiplier : 0;
+    return (multiplier > 0) ? multiplier : 1;
 }
 
 pair<char, char> CommandInterpreter::getSpecial() {
