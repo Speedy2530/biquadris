@@ -4,9 +4,9 @@
 
 using namespace std;
 
-Board::Board(std::unique_ptr<Level> initialLevel, bool textMode, std::string seqFile) :
-    grid(TOTAL_ROWS, std::vector<Cell>(TOTAL_COLS)),
-    currLevel(std::move(initialLevel)),
+Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
+    grid(TOTAL_ROWS, vector<Cell>(TOTAL_COLS)),
+    currLevel(move(initialLevel)),
     nextBlock(nullptr),
     blocks(100),
     freeBlockIDs(),
@@ -283,7 +283,7 @@ void Board::clearLines() {
 
                 // remove the relevant blockID instances from the clearedBlockIDs list
                 clearedBlockIDs.erase(
-                std::remove(clearedBlockIDs.begin(), clearedBlockIDs.end(), blockID),
+                remove(clearedBlockIDs.begin(), clearedBlockIDs.end(), blockID),
                 clearedBlockIDs.end()
                 );
 
@@ -364,7 +364,7 @@ void Board::levelDown() {
 
 
 void Board::display() const {
-    for (int r = TOTAL_ROWS - 1; r >= 0; r--) {
+    for (int r = 0; r < TOTAL_ROWS; r++) {
         cout << "|";
         for (int c = 0; c < TOTAL_COLS; ++c) {
             cout << grid[r][c].getShape();

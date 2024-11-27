@@ -14,7 +14,6 @@ class gameController {
     public:
         void getPlayer();
 
-
 };
 
 #endif
