@@ -3,7 +3,9 @@
 // using namespace std;
 
 Level::Level(int levelNumber, const vector<double>& probabilities)
-    : levelNum{levelNumber}, isRand{false}, seed{0}, currIdx{0}, seq{}, probs{probabilities} {}
+    : levelNum{levelNumber}, isRand{true}, currIdx{0}, seq{}, probs{probabilities} {
+        gen.seed(0);
+    }
 
 void Level::readFile(const string& file) {
     ifstream infile(file);
@@ -75,8 +77,6 @@ int Level::randomIndex() {
         cumulative[i] = cumulative[i - 1] + probs[i];
     }
 
-    random_device rdev;
-    mt19937 gen(rdev());
     uniform_real_distribution<> dis(0.0, 1.0);
     double randomValue = dis(gen);
 
@@ -121,7 +121,7 @@ unique_ptr<Block> Level::makeRandomBlock() {
 }
 
 void Level::setSeed(int seed) {
-    this->seed = seed;
+    gen.seed(seed);
 }
 
 void Level::setRand(bool isRand) {

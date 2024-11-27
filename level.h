@@ -17,10 +17,10 @@ class Level {
     protected:
         int levelNum;
         bool isRand;
-        int seed;
         size_t currIdx;
         vector<char> seq;
         vector<double> probs;
+        mt19937 gen;
     public:
         Level(int levelNum, const std::vector<double>& probs = {});
         virtual ~Level() = default;
