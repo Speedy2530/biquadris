@@ -10,8 +10,8 @@ class Level0 : public Level {
 
     public:
         Level0(const string& file);
-        unique_ptr<Block> makeNextBlock();
-        virtual ~Level0();
+        unique_ptr<Block> makeNextBlock(int blocksSinceClear = 0) override;
+	virtual ~Level0();
 };
 
 #endif 

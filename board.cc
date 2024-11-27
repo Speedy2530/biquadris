@@ -12,22 +12,22 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     score{0},
     hiScore{0},
     textMode{textMode},
-    gameOver{false},
     currBlockID{-1},
+    gameOver{false},
     blocksSinceClear{0},
     linesCleared{0},
     currLevelNum{0},
     seqFile{seqFile},
-    blocks{100, nullptr},
+    blocks{100}
     {
-        nextBlock = currLevel->makeNextBlock();
+        nextBlock = currLevel->makeNextBlock(blocksSinceClear);
         newBlock();
 }
 
 
 // Helpers
 void Board::fillCells() {
-    if (currBlockID == -1 || currBlockID >= blocks.size() || !blocks[currBlockID]) return;
+    if (currBlockID == -1 || currBlockID >= static_cast<int>(blocks.size()) || !blocks[currBlockID]) return;
 
     for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
         int absRow = origRow + relRow;
@@ -205,7 +205,7 @@ void Board::lockBlock() {
 
 // Remove the block from the grid without resetting the unique_ptr
 void Board::removeBlockFromGrid(int blockID, int row, int col) {
-    if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
+    if (blockID < 0 || blockID >= static_cast<int>(blocks.size()) || !blocks[blockID]) return;
 
     for (const auto& [relRow, relCol] : blocks[blockID]->getRelPos()) {
         int absRow = row + relRow;
