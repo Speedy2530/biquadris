@@ -61,11 +61,11 @@ void TextDisplay::displayText() {
 
     // Display highscore
     //std::cout << "             Highscore: " << highscore << std::endl;
-    cout << "Player 1 Highscore: " << board1.getHiScore() << "      " <<
+    cout << "Player 1 Highscore: " << board1.getHiScore() << "       " <<
 	    "Player 2 Highscore: " << board2.getHiScore() << endl;
 
     // Display Level
-    cout << "Player 1 Level: " << board1.getLevel() << "              " <<
+    cout << "Player 1 Level: " << board1.getLevel() << "          " <<
 	    "Player 2 Level: " << board2.getLevel() << endl;
 
     // Define border characters

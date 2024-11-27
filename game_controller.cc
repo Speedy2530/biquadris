@@ -111,7 +111,6 @@ void GameController::playGame() {
             }
 
             // Update display after each command
-            display->display();
         
 	    if (curPlayer->isCurrentBlockLocked()) {
                 handlePostDrop();
