@@ -25,6 +25,7 @@ class Board {
         vector < unique_ptr <Block> > blocks; // list of blocks with index as IDs
         vector <int> freeBlockIDs; // free IDs within the blocks vector for reuse
         int currBlockID;
+        bool gameOver;
 
         vector <int> clearedBlockIDs; // list of block IDs that have been cleared (1 per cell)
 
@@ -37,7 +38,6 @@ class Board {
         int linesCleared;
         int currLevelNum;
         bool textMode;
-        bool gameOver;
 
         // Helpers
         void fillCells();
