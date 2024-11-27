@@ -6,6 +6,7 @@
 using namespace std;
 
 pair<int, string> CommandInterpreter::getNextCommand() {
+    cout << "Enter Command: ";
     string command;
     cin >> command;
     if(!commands.empty() && currIdx < commands.size()) {
