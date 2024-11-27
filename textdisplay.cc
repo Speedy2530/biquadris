@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <iomanip>
 
+
+
 // Constructor
 TextDisplay::TextDisplay(const Board &b1, const Board &b2, bool mode)
     : board1(b1), board2(b2), textMode(mode), xwindow_ptr(nullptr) {

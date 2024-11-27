@@ -17,6 +17,9 @@ int Cell::getCol() const {
 }
 
 char Cell::getShape() const {
+	if (blind) {
+		return '?';
+	}
 	return shape;
 }
 
