@@ -98,6 +98,7 @@ class Board {
         int getHeight() const { return TOTAL_ROWS; }
         const Cell& getCell(int row, int col) const { return grid[row][col]; }
         int getLevel() const { return currLevelNum; }
+        const Block* getNextBlock() const;
 };
 
 #endif 

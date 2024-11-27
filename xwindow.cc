@@ -2,6 +2,7 @@
 #include "xwindow.h"
 #include <iostream>
 #include <algorithm>
+#include <climits>
 
 // Constructor
 XWindow::XWindow(const Board &board1, const Board &board2) 
@@ -94,11 +95,68 @@ void XWindow::display() {
         }
     }
 
+    int nextBlockY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 20;
+    drawNextBlock(board1, MARGIN_LEFT, nextBlockY);
+    drawNextBlock(board2, MARGIN_LEFT + board1.getWidth() * DESIRED_CELL_WIDTH + SPACING, nextBlockY);
+
     // Update additional info (score, level)
     updateInfo();
 
     // Refresh the window to show updates
     xw.redraw();
+}
+
+void XWindow::drawNextBlock(const Board& board, int startX, int startY) {
+    const Block* nextBlock = board.getNextBlock();
+    if (!nextBlock) return;
+
+    // Get shape and relative positions
+    char shape = nextBlock->getShape();
+    const auto& relPos = nextBlock->getRelPos();
+
+    // Set cell size
+    int cellWidth = DESIRED_CELL_WIDTH;
+    int cellHeight = DESIRED_CELL_HEIGHT;
+
+    // Determine color based on block type
+    int color;
+    switch(shape) {
+        case 'I': color = Xwindow::Cyan; break;
+        case 'J': color = Xwindow::Blue; break;
+        case 'L': color = Xwindow::Orange; break;
+        case 'O': color = Xwindow::Yellow; break;
+        case 'S': color = Xwindow::Green; break;
+        case 'T': color = Xwindow::Purple; break;
+        case 'Z': color = Xwindow::Red; break;
+        default: color = Xwindow::White; break;
+    }
+
+    // Adjust positions to center the block in a 4x4 grid
+    int minRow = INT_MAX, minCol = INT_MAX;
+    int maxRow = INT_MIN, maxCol = INT_MIN;
+    for (const auto& pos : relPos) {
+        minRow = std::min(minRow, pos.first);
+        maxRow = std::max(maxRow, pos.first);
+        minCol = std::min(minCol, pos.second);
+        maxCol = std::max(maxCol, pos.second);
+    }
+    int blockWidth = maxCol - minCol + 1;
+    int blockHeight = maxRow - minRow + 1;
+
+    int offsetX = (4 - blockWidth) / 2;
+    int offsetY = (4 - blockHeight) / 2;
+
+    // Draw each cell of the block
+    for (const auto& pos : relPos) {
+        int x = startX + (pos.second - minCol + offsetX) * cellWidth;
+        int y = startY + (pos.first - minRow + offsetY) * cellHeight;
+
+        xw.fillRectangle(x, y, cellWidth, cellHeight, color);
+        xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+    }
+
+    // Draw a label "Next:"
+    xw.drawString(startX, startY, "Next:");
 }
 
 // Updates the UI information area

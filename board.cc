@@ -498,3 +498,7 @@ void Board::setRandom(bool isRand) { currLevel->setRand(isRand); };
 void Board::setSeed(int seed) { currLevel->setSeed(seed); };
 
 bool Board::isGameOver() const { return gameOver; }
+
+const Block* Board::getNextBlock() const {
+    return nextBlock.get();
+}

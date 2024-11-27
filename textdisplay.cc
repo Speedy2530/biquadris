@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iomanip>
+#include <climits>
 
 // Constructor
 TextDisplay::TextDisplay(const Board &b1, const Board &b2, bool mode)
@@ -109,4 +110,95 @@ void TextDisplay::displayText() {
     // Display bottom borders
     std::cout << topBorder << "               " << topBorder << std::endl;
     std::cout << std::endl;
+    
+    // Get the next blocks for both players
+    const Block* nextBlock1 = board1.getNextBlock();
+    const Block* nextBlock2 = board2.getNextBlock();
+
+    // Get string representations of the next blocks
+    std::vector<std::string> nextBlockLines1 = getBlockString(nextBlock1);
+    std::vector<std::string> nextBlockLines2 = getBlockString(nextBlock2);
+
+    // Format the next block lines to center under each board
+    std::vector<std::string> formattedNextBlockLines1;
+    std::vector<std::string> formattedNextBlockLines2;
+
+    for (const auto& line : nextBlockLines1) {
+        int totalPadding = boardWidth - line.length();
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+        std::string formattedLine = std::string(leftPadding, ' ') + line + std::string(rightPadding, ' ');
+        formattedNextBlockLines1.push_back(formattedLine);
+    }
+
+    for (const auto& line : nextBlockLines2) {
+        int totalPadding = boardWidth - line.length();
+        int leftPadding = totalPadding / 2;
+        int rightPadding = totalPadding - leftPadding;
+        std::string formattedLine = std::string(leftPadding, ' ') + line + std::string(rightPadding, ' ');
+        formattedNextBlockLines2.push_back(formattedLine);
+    }
+    
+    // Print the "Next:" labels centered under each board
+    int labelTotalPadding = boardWidth - 5; // "Next:" is 5 characters
+    int labelLeftPadding = labelTotalPadding / 2;
+    int labelRightPadding = labelTotalPadding - labelLeftPadding;
+
+    std::cout << vertical << std::string(labelLeftPadding, ' ') << "Next:" << std::string(labelRightPadding, ' ') << vertical
+              << "               "
+              << vertical << std::string(labelLeftPadding, ' ') << "Next:" << std::string(labelRightPadding, ' ') << vertical << std::endl;
+
+    // Print the next block lines
+    for (size_t i = 0; i < formattedNextBlockLines1.size(); ++i) {
+        std::cout << vertical << formattedNextBlockLines1[i] << vertical
+                  << "               "
+                  << vertical << formattedNextBlockLines2[i] << vertical << std::endl;
+    }
+
+    // Optional: Add an empty line after the next blocks
+    std::cout << std::endl;
+}
+
+std::vector<std::string> TextDisplay::getBlockString(const Block* block) {
+    std::vector<std::string> lines;
+    if (!block) {
+        // Return empty lines if block is null
+        for (int i = 0; i < 4; ++i) {
+            lines.push_back("    ");
+        }
+        return lines;
+    }
+
+    // Initialize a 4x4 grid
+    char grid[4][4] = { {' ', ' ', ' ', ' '}, 
+                        {' ', ' ', ' ', ' '},
+                        {' ', ' ', ' ', ' '},
+                        {' ', ' ', ' ', ' '} };
+
+    // Find min and max positions to adjust the block within the grid
+    int minRow = INT_MAX, minCol = INT_MAX;
+    for (const auto& [relRow, relCol] : block->getRelPos()) {
+        minRow = std::min(minRow, relRow);
+        minCol = std::min(minCol, relCol);
+    }
+
+    // Place block shape in the grid
+    for (const auto& [relRow, relCol] : block->getRelPos()) {
+        int row = relRow - minRow;
+        int col = relCol - minCol;
+        if (row >= 0 && row < 4 && col >= 0 && col < 4) {
+            grid[row][col] = block->getShape();
+        }
+    }
+
+    // Convert grid to lines
+    for (int i = 0; i < 4; ++i) {
+        std::string line;
+        for (int j = 0; j < 4; ++j) {
+            line += grid[i][j];
+        }
+        lines.push_back(line);
+    }
+
+    return lines;
 }

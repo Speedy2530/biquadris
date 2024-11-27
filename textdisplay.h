@@ -31,6 +31,7 @@ private:
     // Helper methods for different display modes
     void displayText();
     void displayGraphical();
+    std::vector<std::string> getBlockString(const Block* block);
 };
 
 #endif
