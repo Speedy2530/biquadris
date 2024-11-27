@@ -3,6 +3,6 @@
 
 Level2::Level2() : Level(2, vector<double>(7, 1.0 / 7)) {}
 
-unique_ptr<Block> Level2::makeNextBlock(int blocksSinceClear) {
+unique_ptr<Block> Level2::makeNextBlock(int /*blocksSinceClear*/) {
     return makeRandomBlock();
 }

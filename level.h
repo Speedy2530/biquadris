@@ -35,8 +35,8 @@ class Level {
         int randomIndex();
         void setSeed(int seed);
         void setRand(bool isRand);
-        virtual void onBlockPlaced(bool clearedRows) {}
-        virtual void afterMotion(int player) {};
+        virtual void onBlockPlaced(bool /*clearedRows*/) {}
+        virtual void afterMotion(int /*player*/) {};
 
         int getLevelNum() const { return levelNum; };
 };

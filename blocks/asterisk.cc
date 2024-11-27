@@ -12,7 +12,7 @@ vector <pair <int, int> > AsteriskBlock::getRelPos() const {
 
 char AsteriskBlock::getShape() const { return '*'; }
 
-void AsteriskBlock::rotate(string dir) {
+void AsteriskBlock::rotate(string /*dir*/) {
     rotated = 0; // might need to know actual rotated? fix this if needed
 }
 

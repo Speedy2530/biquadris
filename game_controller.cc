@@ -15,18 +15,25 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
         case 0:
             level1 = make_unique<Level0>(scriptfile1);
             level2 = make_unique<Level0>(scriptfile2);
+	    break;
         case 1:
             level1 = make_unique<Level1>();
             level2 = make_unique<Level1>();
+	    break;
         case 2:
             level1 = make_unique<Level2>();
             level2 = make_unique<Level2>();
+	    break;
         case 3:
             level1 = make_unique<Level3>(scriptfile1);
             level2 = make_unique<Level3>(scriptfile2);
+	    break;
         case 4:
             level1 = make_unique<Level3>(scriptfile1);
             level2 = make_unique<Level3>(scriptfile2);
+	    break;
+	default:
+	    break;
     }
     
 

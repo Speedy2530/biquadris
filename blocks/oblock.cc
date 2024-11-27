@@ -12,7 +12,7 @@ vector <pair <int, int> > OBlock::getRelPos() const {
 
 char OBlock::getShape() const { return 'O'; }
 
-void OBlock::rotate(string dir) {
+void OBlock::rotate(string /*dir*/) {
     rotated = 0; // might need to know actual rotated? fix this if needed
 }
 
