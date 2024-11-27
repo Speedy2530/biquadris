@@ -121,8 +121,11 @@ void Board::newBlock() {
 }
 
 void Board::forceBlock(char shape) {
+    removeBlockFromGrid(currBlockID, origRow, origCol);
     blocks[currBlockID] = currLevel->blockFromShape(shape);
+    fillCells();
 }
+
 
 bool Board::moveBlockLeft() {
     if (currBlockID == -1) return false;
