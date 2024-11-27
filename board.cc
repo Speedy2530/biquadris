@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Board::Board(unique_ptr<Level> initialLevel, bool textMode) :
+Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     grid{TOTAL_ROWS, vector<Cell>(TOTAL_COLS)},
     currLevel{move(initialLevel)}, 
     origRow{3},
@@ -14,9 +14,11 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode) :
     textMode{textMode},
     gameOver{false},
     currBlockID{-1},
+    blocksSinceClear{0},
     linesCleared{0},
     currLevelNum{0},
-    blocks{100, nullptr}
+    seqFile{seqFile},
+    blocks{100, nullptr},
     {
         nextBlock = currLevel->makeNextBlock();
         newBlock();
@@ -34,7 +36,7 @@ void Board::fillCells() {
     }
 }
 
-int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) {
+int Board::getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) const {
     if (!freeBlockIDs.empty()) {
         int id = freeBlockIDs.back();
         freeBlockIDs.pop_back();
@@ -94,7 +96,8 @@ void Board::newBlock() {
     }
 
     fillCells();
-    nextBlock = currLevel->makeNextBlock();
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+    blocksSinceClear++;
 }
 
 void Board::forceBlock(char shape) {
@@ -159,7 +162,7 @@ bool Board::moveBlockDown() {
     return true;
 }
 
-bool Board::rotateBlock(string dir) {
+bool Board::rotateBlock(const string& dir) {
     if (currBlockID == -1) return false;
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
@@ -271,6 +274,9 @@ void Board::clearLines() {
             }
         }
 
+        blocksSinceClear = 0;
+        linesCleared = 0;
+
         // Update the score based on lines cleared
         calculateScore(linesCleared);
     }
@@ -301,10 +307,10 @@ void Board::levelUp() {
             currLevel = make_unique<Level2>();
             break;
         case 2:
-            currLevel = make_unique<Level3>();
+            currLevel = make_unique<Level3>(seqFile);
             break;
         case 3:
-            currLevel = make_unique<Level4>();
+            currLevel = make_unique<Level4>(seqFile);
             break;
         default:
             cout << "No higher level defined. Staying at Level " << currLevelNum << endl;
@@ -320,7 +326,7 @@ void Board::levelDown() {
 
     switch (currLevelNum) {
         case 1:
-            currLevel = make_unique<Level0>();
+            currLevel = make_unique<Level0>(seqFile);
             break;
         case 2:
             currLevel = make_unique<Level1>();
@@ -329,7 +335,7 @@ void Board::levelDown() {
             currLevel = make_unique<Level2>();
             break;
         case 4:
-            currLevel = make_unique<Level3>();
+            currLevel = make_unique<Level3>(seqFile);
             break;
         default:
             cout << "No Lower level defined. Staying at Level " << currLevelNum << endl;

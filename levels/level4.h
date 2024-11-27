@@ -9,7 +9,7 @@ class Level4 : public Level {
 
     public:
         Level4(const string& file);
-        unique_ptr<Block> makeNextBlock(int blocksSinceClear) override;
+        unique_ptr<Block> makeNextBlock(int blocksSinceClear);
 };
 
 #endif 
