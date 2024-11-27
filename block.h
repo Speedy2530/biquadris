@@ -31,6 +31,7 @@ class Block {
 
         bool isHeavy() const { return heavy; }
         bool isLocked() const { return locked; }
+        void setLocked(bool isLocked) { locked = isLocked; }
         void setHeavy(bool isHeavy) { heavy = isHeavy; }
         bool isCurrBlock() const { return currBlock; }
         void setAsCurrBlock(bool isCurr) { currBlock = isCurr; }
