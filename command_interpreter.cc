@@ -65,7 +65,7 @@ int CommandInterpreter::getMultiplier(string command, Block& block) {
     size_t pos = 0;
 
     // Extract the numeric multiplier (e.g., "2left" -> 2)
-    while (pos < command.length() && isdigit(command[pos])) {
+    while (pos < command.length() && isdigit(command[pos], std::locale())) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
     }

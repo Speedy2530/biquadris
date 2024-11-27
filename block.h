@@ -12,6 +12,7 @@ class Block {
         vector <pair <int, int> > relPos; // bottom left is {0, 0}
         bool currBlock;
         bool heavy;
+        bool locked;
         int rotated; // 0 1 2 3, representing 90, 0, -90, -180 degrees
 
         int blockID; // NOT USING THIS ANYMORE
@@ -29,6 +30,7 @@ class Block {
         virtual unique_ptr<Block> clone() const = 0;
 
         bool isHeavy() const { return heavy; }
+        bool isLocked() const { return locked; }
         void setHeavy(bool isHeavy) { heavy = isHeavy; }
         bool isCurrBlock() const { return currBlock; }
         void setAsCurrBlock(bool isCurr) { currBlock = isCurr; }
