@@ -384,6 +384,14 @@ void Board::display() const {
     nextBlock->print();
 }
 
+void Board::setCellsBlind(bool isBlind) {
+    for (int r = 2; r < 12; r++) {
+        for (int c = 2; c < 9; c++) {
+            grid[r][c].setBlind(isBlind);
+        }
+    }
+}
+
 
 void Board::reset() {
     // Clear the grid
@@ -413,5 +421,9 @@ int Board::getScore() const { return score; }
 int Board::getHiScore() const { return hiScore; }
 
 void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
+
+void Board::setRandom(bool isRand) { currLevel->setRand(isRand); };
+
+void Board::setSeed(int seed) { currLevel->setSeed(seed); };
 
 bool Board::isGameOver() const { return gameOver; }

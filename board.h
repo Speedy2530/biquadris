@@ -64,10 +64,13 @@ class Board {
         bool dropBlock();
         void newBlock();
         void forceBlock(char s);
+        void setCellsBlind(bool isBlind);
 
         // Levels
         void levelUp();
         void levelDown();
+        void setRandom(bool isRand);
+        void setSeed(int seed);
 
         // Scoring
         int getScore() const;
