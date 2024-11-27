@@ -1,3 +1,4 @@
+// textdisplay.h
 #ifndef TEXTDISPLAY_H
 #define TEXTDISPLAY_H
 
@@ -7,20 +8,20 @@
 #include "block.h"
 #include "level.h"
 #include "board.h"
-#include "xwindow.h"
+#include "xwindow.h" // Include the updated XWindow class
 
 class TextDisplay {
     const Board &board1;
     const Board &board2;
     bool textMode;
     unsigned int highscore;
-    Xwindow *xwindow_ptr; // Corrected class name
+    XWindow *xwindow_ptr; // Use XWindow instead of Xwindow
 
 public:
     // Constructor takes two boards and a mode flag
     TextDisplay(const Board &b1, const Board &b2, bool mode = true);
 
-    // Destructor to clean up Xwindow if used
+    // Destructor to clean up XWindow if used
     ~TextDisplay();
 
     // Displays the current state of the boards
@@ -33,4 +34,3 @@ private:
 };
 
 #endif
-

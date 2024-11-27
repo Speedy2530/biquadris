@@ -1,18 +1,15 @@
+// main.cc
 #include "game_controller.h"
 #include <iostream>
 #include <memory>
 #include <string>
 
-#include <iostream>
-#include <string>
-
 int main(int argc, char* argv[]) {
-    bool textMode = true; 
+    bool textMode = false;  // Set to false to enable graphical mode by default
     int seed = 0;          
-    string scriptfile1 = "sequence1.txt"; 
-    string scriptfile2 = "sequence2.txt"; 
+    std::string scriptfile1 = "sequence1.txt"; 
+    std::string scriptfile2 = "sequence2.txt"; 
     int startLevel = 0;    
-
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -34,5 +31,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
-
