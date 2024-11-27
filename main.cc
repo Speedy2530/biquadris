@@ -7,7 +7,7 @@
 #include <string>
 
 int main(int argc, char* argv[]) {
-    bool textMode = false; 
+    bool textMode = true; 
     int seed = 0;          
     string scriptfile1 = "sequence1.txt"; 
     string scriptfile2 = "sequence2.txt"; 

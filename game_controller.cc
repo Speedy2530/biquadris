@@ -5,7 +5,8 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
     p1Effect('N'),
     p1forceBlock('N'),
     p2Effect('N'),
-    p2forceBlock('N') {
+    p2forceBlock('N'),
+    gameOver{false} {
 
     unique_ptr<Level> level1 = nullptr;
     unique_ptr<Level> level2 = nullptr;
@@ -15,11 +16,11 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
             level1 = make_unique<Level0>(scriptfile1);
             level2 = make_unique<Level0>(scriptfile2);
         case 1:
-            level1 = make_unique<Level1>(scriptfile1);
-            level2 = make_unique<Level1>(scriptfile2);
+            level1 = make_unique<Level1>();
+            level2 = make_unique<Level1>();
         case 2:
-            level1 = make_unique<Level2>(scriptfile1);
-            level2 = make_unique<Level2>(scriptfile2);
+            level1 = make_unique<Level2>();
+            level2 = make_unique<Level2>();
         case 3:
             level1 = make_unique<Level3>(scriptfile1);
             level2 = make_unique<Level3>(scriptfile2);
@@ -41,7 +42,7 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
 }
 
 void GameController::playGame() {
-    bool gameOver = false;
+    gameOver = false;
     while (!gameOver) {
         curPlayer = player1Turn ? player1 : player2;
 
@@ -68,55 +69,29 @@ void GameController::playGame() {
             if (fullCommand == "left") {
                 curPlayer->moveBlockLeft();
 
-                if (curPlayer->isCurrentBlockLocked()) {
-
+                if (curPlayer->wasBlockLockedDuringLastMove()) {
+                    cout << "curr block is locked" << endl;
                     handlePostDrop();
-
-                    if (curPlayer->isGameOver()) {
-                        restartGame();
-                        break;  
-                    }
-
                     break;  
                 }
             } else if (fullCommand == "right") {
                 curPlayer->moveBlockRight();
 
-                if (curPlayer->isCurrentBlockLocked()) {
-
+                if (curPlayer->wasBlockLockedDuringLastMove()) {
+                    cout << "curr block is locked" << endl;
                     handlePostDrop();
-
-                    if (curPlayer->isGameOver()) {
-                        restartGame();
-                        break;  
-                    }
-
                     break;  
                 }
             } else if (fullCommand == "down") {
             	curPlayer->moveBlockDown();
 
 
-                if (curPlayer->isCurrentBlockLocked()) {
-
+                if (curPlayer->wasBlockLockedDuringLastMove()) {
                     handlePostDrop();
-
-                    if (curPlayer->isGameOver()) {
-                        restartGame();
-                        break;  
-                    }
-
                     break;  
                 }
 	    } else if (fullCommand == "drop") {
                 curPlayer->dropBlock();
-
-                if (curPlayer->isGameOver()) {
-                    cout << "Game over for current player!" << endl;
-                    restartGame();
-                    gameOver = true;
-                    break;
-                }
 
                 handlePostDrop();
                 break; // Exit multiplier loop after drop
@@ -197,6 +172,12 @@ void GameController::applyEffect(shared_ptr<Board> player, char effect, char for
 
 void GameController::handlePostDrop() {
 
+    if (curPlayer->isGameOver()) {
+        cout << "Game over for current player!" << endl;
+        restartGame();
+        gameOver = true;
+    }
+
     curPlayer->setCellsBlind(false);
 
     int linesCleared = curPlayer->getLinesCleared();
@@ -211,6 +192,8 @@ void GameController::handlePostDrop() {
         }
     }
 
+    cout << " Switching player turns" << endl;
+    curPlayer->setBlockLockedDuringLastMove(false);
     player1Turn = !player1Turn;
 }
 

@@ -16,6 +16,7 @@ class GameController {
     char p2Effect, p2forceBlock;
     CommandInterpreter interpreter;
     unique_ptr<TextDisplay> display; // Pointer to TextDisplay
+    bool gameOver;
 
 public:
     // Constructor takes a mode flag for display

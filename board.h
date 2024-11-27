@@ -29,6 +29,7 @@ class Board {
 
         vector <int> clearedBlockIDs; // list of block IDs that have been cleared (1 per cell)
 
+        bool blockLockedDuringLastMove;
         string seqFile;
         int origRow; 
         int origCol; 
@@ -82,6 +83,8 @@ class Board {
 
         int getCurrBlockID() const;
         const vector < unique_ptr <Block> > &getBlocks() const;
+        bool wasBlockLockedDuringLastMove() const;
+        void setBlockLockedDuringLastMove(bool lock);
 
         // Display
         void display() const;

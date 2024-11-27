@@ -13,6 +13,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     currBlockID(-1),
     gameOver(false),
     clearedBlockIDs(),
+    blockLockedDuringLastMove{false},
     seqFile(seqFile),
     origRow(3),
     origCol(0),
@@ -108,8 +109,10 @@ void Board::newBlock() {
     }
 
     fillCells();
-    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
     blocksSinceClear++;
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+
+    if (blocks[currBlockID]->getShape() == '*') dropBlock();
 
     if (!nextBlock) {
         cerr << "Error: nextBlock is null." << endl;
@@ -173,7 +176,7 @@ bool Board::moveBlockDown() {
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
-    if (!canPlaceBlock(newRow, origCol)) {
+       if (!canPlaceBlock(newRow, origCol)) {
         // Can no longer go down, lock the block
         fillCells();
         lockBlock();
@@ -233,10 +236,15 @@ bool Board::dropBlock() {
 
 void Board::lockBlock() {
     blocks[currBlockID]->setLocked(true);
+    blockLockedDuringLastMove = true;
 }
 
 bool Board::isCurrentBlockLocked() {
     return blocks[currBlockID]->isLocked();
+}
+
+void Board::setBlockLockedDuringLastMove(bool lock) {
+    blockLockedDuringLastMove = lock;
 }
 
 // Remove the block from the grid without resetting the unique_ptr
@@ -256,6 +264,7 @@ void Board::removeBlockFromGrid(int blockID, int row, int col) {
 }
 
 void Board::clearLines() {
+    linesCleared = 0;
     for (int r = 0; r < TOTAL_ROWS; r++) {
         bool isFullLine = true;
         vector<int> blockIDs = {};
@@ -328,8 +337,6 @@ void Board::clearLines() {
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
-
-        linesCleared = 0;
     }
 }
 
@@ -464,6 +471,7 @@ void Board::reset() {
     blocks.clear();
     freeBlockIDs.clear();
     clearedBlockIDs.clear();
+    blocksSinceClear = 0;
     newBlock();
 }
 
@@ -479,6 +487,8 @@ int Board::getHiScore() const { return hiScore; }
 void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
 
 int Board::getLinesCleared() const { return linesCleared; }
+
+bool Board::wasBlockLockedDuringLastMove() const { return blockLockedDuringLastMove; }
 
 void Board::setRandom(bool isRand) { currLevel->setRand(isRand); };
 
