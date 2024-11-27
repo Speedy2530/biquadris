@@ -41,7 +41,7 @@ class Board {
 
         // Helpers
         void fillCells();
-        bool canPlaceBlock(const Block& block, int row, int col) const;
+        bool canPlaceBlock(int row, int col) const;
         void lockBlock();
         void removeBlockFromGrid(int blockID, int row, int col);
         void clearLines();
