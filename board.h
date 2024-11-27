@@ -73,8 +73,10 @@ class Board {
         // Scoring
         int getScore() const;
         int getHiScore() const;
-        int getCurrBlockID() const;
         void updateHiScore();
+
+        int getCurrBlockID() const;
+        vector < unique_ptr <Block> > getBlocks() const;
 
         // Display
         void display() const;

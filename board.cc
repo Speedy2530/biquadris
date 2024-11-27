@@ -406,6 +406,8 @@ void Board::reset() {
 
 int Board::getCurrBlockID() const { return currBlockID; }
 
+vector < unique_ptr <Block> > Board::getBlocks() const { return blocks; }
+
 int Board::getScore() const { return score; }
 
 int Board::getHiScore() const { return hiScore; }
