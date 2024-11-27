@@ -19,10 +19,10 @@ XWindow::XWindow(const Board &board1, const Board &board2)
 }
 
 // Displays the boards and game state
-void XWindow::display() {
+void XWindow::display(bool player1Turn) {
     // Clear the window
     xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::White);
-    
+
     // Cell dimensions
     int cellWidth = DESIRED_CELL_WIDTH;
     int cellHeight = DESIRED_CELL_HEIGHT;
@@ -49,14 +49,19 @@ void XWindow::display() {
                 case 'S': color = Xwindow::Green; break;
                 case 'T': color = Xwindow::Purple; break;
                 case 'Z': color = Xwindow::Red; break;
-                case '*': color = Xwindow::Black; break;
+                case '*': color = Xwindow::Brown; break;
                 default: color = Xwindow::White; break;
             }
 
             if (cell.isFilled()) {
+		// Draw shadow
+    		xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);	
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
+		// Draw a border around the cell
+    		xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             } else {
                 // Draw empty cell border
+                xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
                 xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             }
         }
@@ -87,13 +92,30 @@ void XWindow::display() {
             }
 
             if (cell.isFilled()) {
+		// Draw shadow
+    		xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);	
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
+		// Draw a border around the cell
+    		xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             } else {
                 // Draw empty cell border
+                xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
                 xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             }
         }
     }
+
+    // Board dimensions
+    int boardWidth1 = board1.getWidth();
+    int boardHeight1 = board1.getHeight();
+    int boardWidth2 = board2.getWidth();
+    int boardHeight2 = board2.getHeight();
+
+    if (player1Turn) {
+        xw.drawRectangle(startX1, startY, boardWidth1 * cellWidth, boardHeight1 * cellHeight, Xwindow::Red);
+    } else {
+        xw.drawRectangle(startX2, startY, boardWidth2 * cellWidth, boardHeight2 * cellHeight, Xwindow::Red);
+    }	
 
     int nextBlockY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 20;
     drawNextBlock(board1, MARGIN_LEFT, nextBlockY);

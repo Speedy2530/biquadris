@@ -25,7 +25,7 @@ public:
     ~TextDisplay();
 
     // Displays the current state of the boards
-    void display();
+    void display(bool player1Turn);
 
 private:
     // Helper methods for different display modes

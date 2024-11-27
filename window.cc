@@ -34,8 +34,21 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
     colorMap[Black] = BlackPixel(d, DefaultScreen(d));
 
     // Define color names corresponding to enum indices
-    const char* colorNames[] = { "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#800080", "#00FFFF", "#FFA500" };
-    for (int i = Red; i <= Orange; ++i) {
+    const char* colorNames[] = {
+        "#FF0000", // Red
+        "#00FF00", // Green
+        "#0000FF", // Blue
+        "#FFFF00", // Yellow
+        "#800080", // Purple
+        "#00FFFF", // Cyan
+        "#FFA500", // Orange
+        "#ADD8E6", // LightBlue
+        "#006400", // DarkGreen
+        "#FFC0CB", // Pink
+        "#A52A2A", // Brown
+        "#808080"  // Grey
+    };
+    for (int i = Red; i < NumColors; ++i) {
         XColor xcolor;
         Colormap colormap = DefaultColormap(d, DefaultScreen(d));
         if (!XParseColor(d, colormap, colorNames[i - Red], &xcolor)) {
@@ -46,6 +59,11 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
         }
         colorMap[i] = xcolor.pixel;
         std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
+    }
+
+    XFontStruct *font = XLoadQueryFont(d, "-*-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
+    if (font) {
+        XSetFont(d, gc, font->fid);
     }
 }
 
@@ -64,7 +82,7 @@ Xwindow::~Xwindow() {
 
 // Color mapping method
 unsigned long Xwindow::getColor(int color) {
-    if (color >= White && color <= Orange) {
+    if (color >= White && color < NumColors) {
         return colorMap[color];
     }
     return WhitePixel(d, DefaultScreen(d));

@@ -8,7 +8,23 @@
 class Xwindow {
 public:
     // Enum for colors should be public to allow external access
-    enum { White, Black, Red, Green, Blue, Yellow, Purple, Cyan, Orange };
+    enum {
+        White,
+        Black,
+        Red,
+        Green,
+        Blue,
+        Yellow,
+        Purple,
+        Cyan,
+        Orange,
+        LightBlue,
+        DarkGreen,
+        Pink,
+        Brown,
+        Grey,
+	NumColors
+    };
 
 private:
     Display *d;
@@ -16,7 +32,7 @@ private:
     GC gc;
     int width;
     int height;
-    unsigned long colorMap[9]; // To store pixel values for colors
+    unsigned long colorMap[15]; // To store pixel values for colors
 
 public:
     Xwindow(int width, int height);

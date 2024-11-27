@@ -32,13 +32,13 @@ TextDisplay::~TextDisplay() {
 }
 
 // Display method
-void TextDisplay::display() {
+void TextDisplay::display(bool player1Turn) {
     // Always display text
     displayText();
 
     // If textMode is false and xwindow_ptr is initialized, update the graphical display
     if (!textMode && xwindow_ptr) {
-        xwindow_ptr->display();
+        xwindow_ptr->display(player1Turn);
     }
 }
 

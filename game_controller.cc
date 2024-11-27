@@ -55,7 +55,7 @@ void GameController::playGame() {
         }
 
 	// Display current game state
-        display->display();
+        display->display(player1Turn);
 
         // Get next command
         pair<int, string> nextCommand = interpreter.getNextCommand();
@@ -151,7 +151,7 @@ void GameController::playGame() {
 
     // Display final game state
     cout << "Game over! Final scores:" << endl;
-    display->display();
+    display->display(player1Turn);
 }
 
 void GameController::applyEffect(shared_ptr<Board> player, char effect, char forceBlock) {
