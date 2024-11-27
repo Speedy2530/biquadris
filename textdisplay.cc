@@ -44,14 +44,15 @@ void TextDisplay::display() {
 // Definition of displayText()
 void TextDisplay::displayText() {
     // Update highscore based on player scores
-    unsigned int highscore = std::max(board1.getHiScore(), board2.getHiScore());
+    // unsigned int highscore = std::max(board1.getHiScore(), board2.getHiScore());
 
     // Display highscore
-    std::cout << "             Highscore: " << highscore << std::endl;
+    std::cout << "Player 1 Highscore: " << board1.getHiScore() << "       "
+              << "Player 2 Highscore: " << board2.getHiScore() << std::endl;
 
     // Display Level
-    std::cout << "Player 1 Level: " << board1.getLevel() << "           "
-              << "Player 2 Level: " << board2.getLevel() << std::endl;
+    // std::cout << "Player 1 Level: " << board1.getLevel() << "           "
+    //           << "Player 2 Level: " << board2.getLevel() << std::endl;
 
     // Define border characters
     const char corner = '+';

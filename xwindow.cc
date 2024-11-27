@@ -113,14 +113,18 @@ void XWindow::updateInfo() {
     int levelX2 = startX2;
 
     // Draw score and level for player 1
+    std::string highscoreStr1 = "Highscore: " + std::to_string(board1.getHiScore());
     std::string scoreStr1 = "Score: " + std::to_string(board1.getScore());
     std::string levelStr1 = "Level: " + std::to_string(board1.getLevel());
-    xw.drawString(scoreX1, infoStartY, scoreStr1);
-    xw.drawString(levelX1, infoStartY + 15, levelStr1);
+    xw.drawString(scoreX1, infoStartY, highscoreStr1);
+    xw.drawString(scoreX1, infoStartY + 15, scoreStr1);
+    xw.drawString(levelX1, infoStartY + 30, levelStr1);
 
     // Draw score and level for player 2
+    std::string highscoreStr2 = "Highscore: " + std::to_string(board2.getHiScore());
     std::string scoreStr2 = "Score: " + std::to_string(board2.getScore());
     std::string levelStr2 = "Level: " + std::to_string(board2.getLevel());
-    xw.drawString(scoreX2, infoStartY, scoreStr2);
-    xw.drawString(levelX2, infoStartY + 15, levelStr2);
+    xw.drawString(scoreX2, infoStartY, highscoreStr2);
+    xw.drawString(scoreX2, infoStartY + 15, scoreStr2);
+    xw.drawString(levelX2, infoStartY + 30, levelStr2);
 }
