@@ -79,7 +79,7 @@ bool Board::canPlaceBlock(const Block& block, int row, int col) const {
 void Board::newBlock() {
     int newBlockID = getNewBlockID(blocks, freeBlockIDs);
     blocks[newBlockID] = move(nextBlock);
-    currBlock = newBlockID; 
+    currBlockID = newBlockID; 
 
     originRow = 3;
     originCol = 0;
@@ -162,7 +162,7 @@ bool Board::rotateBlock(string dir) {
         return true;
     }
     else {
-        string oppositeDir = ""
+        string oppositeDir = "";
         if (dir == "clockwise") oppositeDir = "counterclockwise";
         else oppositeDir = "clockwise";
         
@@ -201,36 +201,46 @@ void Board::removeBlockFromGrid(int blockID, int row, int col) {
     }
 }
 
-// Permanently remove the block from the grid and reset the unique_ptr
-void Board::removeBlockPermanently(int blockID, int row, int col) {
-    if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
+// // Permanently remove the block from the grid and reset the unique_ptr
+// void Board::removeBlockPermanently(int blockID, int row, int col) {
+//     if (blockID < 0 || blockID >= blocks.size() || !blocks[blockID]) return;
 
-    removeBlockFromGrid(blockID);
-    blocks[blockID].reset();
-    freeBlockIDs.push_back(blockID);
+//     removeBlockFromGrid(blockID);
+//     blocks[blockID].reset();
+//     freeBlockIDs.push_back(blockID);
 
-    if (currBlock == blockID) currBlock = -1;
-}
+//     if (currBlock == blockID) currBlock = -1;
+// }
 
 
 void Board::clearLines() {
-    vector<int> clearedBlockIDs; // To store block IDs from cleared lines
-    int linesCleared = 0;
+    for (int r = 0; r < TOTAL_ROWS; r++) {
+        bool isFullLine = true;
+        vector<int> blockIDs = {};
 
-    for (int r = 0; r < TOTAL_ROWS; ++r) {
-        if (isFullLine(r)) {
+        for (int c = 0; c < TOTAL_COLS; c++) {
+            if (!grid[r][c].isFilled()) {
+                isFullLine = false;
+                break;
+            }
+            blockIDs.push_back(grid[r][c].getBlockID());
+        }
+
+        if (isFullLine) {
             linesCleared++;
-            // Collect all block IDs in this line
-            vector<int> blockIDs = getBlockIDsInLine(r);
             clearedBlockIDs.insert(clearedBlockIDs.end(), blockIDs.begin(), blockIDs.end());
 
-            // Clear the line
-            clearLine(r);
+            for (int c = 0; c < TOTAL_COLS; c++) {
+                grid[r][c].clear()
+            }
 
-            // Shift all rows above down by one
-            shiftRowsDown(r);
+            for (int rowToMove = r; rowToMove < TOTAL_ROWS - 1; ++rowToMove) {
+                for (int c = 0; c < TOTAL_COLS; ++c) {
+                    grid[rowToMove][c].fill(grid[rowToMove + 1][c].getShape(), grid[rowToMove + 1][c].getBlockID());
+                    grid[rowToMove + 1][c].clear();
+                }
+            }
 
-            // After shifting, recheck the same row as rows have moved down
             r--;
         }
     }
@@ -244,8 +254,22 @@ void Board::clearLines() {
 
         // Check for blocks that have all their cells cleared (appear 4 times)
         for (const auto& [blockID, count] : blockCount) {
-            if (isBlockFullyCleared(blockID, clearedBlockIDs)) {
-                awardPoints(blockID);
+
+            // If cleared block
+            if (count == 4 || blocks[blockID].getShape() == '*') {
+
+                int lvl = blocks[blockID].getBlockLevel;
+                score += (lvl + 1) * (lvl + 1); // add level
+
+                // remove the relevant blockID instances from the clearedBlockIDs list
+                clearedBlockIDs.erase(
+                std::remove(clearedBlockIDs.begin(), clearedBlockIDs.end(), blockID),
+                clearedBlockIDs.end()
+                );
+
+                // clear the block from the blocks list
+                blocks[blockID].reset();
+                freeBlockIDs.push_back(blockID);
             }
         }
 
@@ -262,7 +286,6 @@ void Board::calculateScore(int linesCleared) {
 
     if (score > hiScore) hiScore = score;
 }
-
 
 // Levels
 
@@ -351,7 +374,7 @@ void Board::reset() {
     gameOver = false;
     blocks.clear()
     freeBlockIDs.clear()
-    clearedBlockIDs.clear()
+    clearedIDs.clear()
     currBlock = -1;
     nextBlock = nullptr;
     newBlock();
