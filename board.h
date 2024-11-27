@@ -46,7 +46,7 @@ class Board {
         void removeBlockFromGrid(int blockID, int row, int col);
         void clearLines();
         void calculateScore(int linesCleared);
-        int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) const;
+        int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs);
         void reset();
 
     public:

@@ -8,7 +8,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     grid(TOTAL_ROWS, vector<Cell>(TOTAL_COLS)),
     currLevel(move(initialLevel)),
     nextBlock(nullptr),
-    blocks(100),
+    blocks(0),
     freeBlockIDs(),
     currBlockID(-1),
     gameOver(false),
@@ -39,7 +39,7 @@ void Board::fillCells() {
     }
 }
 
-int Board::getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) const {
+int Board::getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) {
     if (!freeBlockIDs.empty()) {
         int id = freeBlockIDs.back();
         freeBlockIDs.pop_back();
