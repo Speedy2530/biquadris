@@ -8,7 +8,7 @@
 
 // Constructor
 Xwindow::Xwindow(int width, int height) : width(width), height(height) {
-    std::cerr << "Initializing Xwindow with width: " << width << ", height: " << height << std::endl;
+    // std::cerr << "Initializing Xwindow with width: " << width << ", height: " << height << std::endl;
     d = XOpenDisplay(NULL);
     if (d == NULL) {
         throw "Cannot open display";
@@ -58,7 +58,7 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
             throw "Failed to allocate color";
         }
         colorMap[i] = xcolor.pixel;
-        std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
+        // std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
     }
 
     XFontStruct *font = XLoadQueryFont(d, "-*-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");

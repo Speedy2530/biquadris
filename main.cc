@@ -26,6 +26,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    cout << "Welcome to Biquadris!" << endl;
+
     GameController controller(textMode, seed, scriptfile1, scriptfile2, startLevel);
     controller.playGame();
 

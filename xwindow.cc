@@ -11,8 +11,8 @@ XWindow::XWindow(const Board &board1, const Board &board2)
           MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + INFO_HEIGHT + MARGIN_BOTTOM) {
     
     // Log the window dimensions
-    std::cerr << "Initializing Xwindow with width: " << xw.getWidth() 
-              << ", height: " << xw.getHeight() << std::endl;
+    // std::cerr << "Initializing Xwindow with width: " << xw.getWidth() 
+    //           << ", height: " << xw.getHeight() << std::endl;
 
     // Initialize background
     xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
