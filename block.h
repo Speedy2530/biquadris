@@ -40,7 +40,7 @@ class Block {
         int getBlockID() { return blockID; }
         int getBlockLevel() { return blockLevel; }
 
-        void print() const;
+        virtual void print() const;
         virtual ~Block() = default;
 };
 

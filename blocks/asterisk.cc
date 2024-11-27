@@ -19,3 +19,7 @@ void AsteriskBlock::rotate(string dir) {
 unique_ptr<Block> AsteriskBlock::clone() const {
     return std::make_unique<AsteriskBlock>(*this);
 }
+
+void AsteriskBlock::print() const {
+    cout << "*" << endl;
+}

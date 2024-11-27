@@ -2,6 +2,7 @@
 #define ASTERISK_H
 
 #include "../block.h"
+#include <iostream>
 
 using namespace std;
 
@@ -14,6 +15,7 @@ class AsteriskBlock : public Block {
         char getShape() const override;
         void rotate(string dir) override;
         unique_ptr<Block> clone() const override;
+        void print() const override;
 };
 
 #endif
