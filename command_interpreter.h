@@ -7,19 +7,15 @@
 using namespace std;
 
 class CommandInterpreter {
-    vector<string> commands{
-        "left", "right", "down", "clockwise", "counterclockwise",
-        "drop", "levelup", "leveldown", "norandom", "random",
-        "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart",
-        "l", "r", "dn", "c", "cc", "dp", "lu", "ld", "nr", "rm", "s",
-        "lef", "lev", "ri", "ra", "cl", "co", "dr", "do", "no", "ra",
-        "se", "re"
-    };
+    string curCommand;
+    int curMultiplier;
 
 public:
-    void callMethod(string command, Block& block);
-    string fullCommandName(string command);
-    int getMultiplier(string command, Block& block);
+    string removeLeadingNumbers(const string& input);
+    bool startsWith(const string& str, const string& prefix);
+    string parseCommand(const string& input);
+    int getMultiplier(string command);
+    pair<int, string> getNextCommand();
 };
 
 #endif
