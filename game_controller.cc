@@ -66,6 +66,9 @@ void gameController::playGame() {
             } else if (command == "restart") {
                 restartGame();
                 break;  
+            } else if (command == "exit") {
+                gameOver = true;
+                break;  
             } else if (isBlockType(command)) {
                 char blockType = command[0];
                 curPlayer->forceBlock(blockType);
