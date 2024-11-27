@@ -15,7 +15,7 @@ public:
     string removeLeadingNumbers(const string& input);
     bool startsWith(const string& str, const string& prefix);
     string parseCommand(const string& input);
-    int getMultiplier(string command);
+    int getMultiplier(const string& command);
     pair<int, string> getNextCommand();
     pair<char, char> getSpecial();
     void readFile(const string& file);

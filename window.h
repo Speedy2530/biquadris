@@ -1,29 +1,39 @@
+// window.h
 #ifndef WINDOW_H
 #define WINDOW_H
 
 #include <X11/Xlib.h>
-#include <iostream>
 #include <string>
 
 class Xwindow {
-  Display *d;
-  Window w;
-  int s, width, height;
-  GC gc;
-  unsigned long colours[5];
- public:
-  Xwindow(int width=500, int height=500);
-  ~Xwindow();
+public:
+    // Enum for colors should be public to allow external access
+    enum { White, Black, Red, Green, Blue, Yellow, Purple, Cyan, Orange };
 
-  enum {White=0, Black, Red, Green, Blue, Yellow, Magenta, Cyan};
+private:
+    Display *d;
+    Window w;
+    GC gc;
+    int width;
+    int height;
+    unsigned long colorMap[9]; // To store pixel values for colors
 
-  int getWidth() const;
-  int getHeight() const;
+public:
+    Xwindow(int width, int height);
+    ~Xwindow();
 
-  void fillRectangle(int x, int y, int width, int height, int colour=Black);
-  void drawString(int x, int y, std::string msg);
+    void fillRectangle(int x, int y, int width, int height, int color);
+    void drawRectangle(int x, int y, int width, int height, int color);
+    void drawLine(int x1, int y1, int x2, int y2, int colour = Black);
+    void drawString(int x, int y, const std::string &msg);
+    void redraw();
 
-  void drawLine(int x1, int y1, int x2, int y2, int colour=Black);
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
+
+    // Define color mapping
+    unsigned long getColor(int color);
 };
 
 #endif
+

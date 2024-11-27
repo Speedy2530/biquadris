@@ -75,16 +75,18 @@ string CommandInterpreter::parseCommand(const string& input) {
     return "none";
 }
 
-int CommandInterpreter::getMultiplier(string command) {
-    int multiplier = 1;
+int CommandInterpreter::getMultiplier(const string& command) {
+    int multiplier = 0;   // Initialize to 0 to correctly accumulate digits
     size_t pos = 0;
 
-    while (pos < command.length() && isdigit(command[pos], std::locale())) {
+    // Iterate over the command string and accumulate digits
+    while (pos < command.length() && std::isdigit(static_cast<unsigned char>(command[pos]))) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
     }
 
-    return multiplier > 1 ? multiplier : 1; 
+    // If no digits were found, default to 1
+    return (multiplier > 0) ? multiplier : 1;
 }
 
 pair<char, char> CommandInterpreter::getSpecial() {

@@ -4,15 +4,14 @@
 using namespace std;
 
 void Block::print() const {
-    char grid[4][4] = { {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '} };
+    char grid[2][4] = { {' ', ' ', ' ', ' '}, {' ', ' ', ' ', ' '} };
 
     for (const auto& [relRow, relCol] : relPos) {
-        int newRow = relRow + 3;
-        grid[newRow][relCol] = getShape();
+        grid[relRow+1][relCol] = getShape();
     }
 
     // Print the grid
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 4; j++) {
             cout << grid[i][j];
         }

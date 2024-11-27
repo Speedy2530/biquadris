@@ -58,7 +58,6 @@ int Board::getNewBlockID() {
 // row and col in the params represent the "bottom left" position of the block on the board
 bool Board::canPlaceBlock(int row, int col) const {
     if (currBlockID == -1 || currBlockID >= static_cast<int>(blocks.size()) || !blocks[currBlockID]) {
-        cerr << "Warning: Invalid currBlockID or blocks[currBlockID] is null." << endl;
         return false;
     }
 
@@ -274,12 +273,21 @@ void Board::clearLines() {
                 grid[r][c].clear();
             }
 
-            for (int rowToMove = r; rowToMove < TOTAL_ROWS - 1; ++rowToMove) {
+            // Shift all rows above down by one
+            for (int rowToMove = r; rowToMove > 0; --rowToMove) {
                 for (int c = 0; c < TOTAL_COLS; ++c) {
-                    grid[rowToMove][c].fill(grid[rowToMove + 1][c].getShape(), grid[rowToMove + 1][c].getBlockID());
-                    grid[rowToMove + 1][c].clear();
+                    grid[rowToMove][c].fill(
+                        grid[rowToMove - 1][c].getShape(),
+                        grid[rowToMove - 1][c].getBlockID()
+                    );
                 }
             }
+
+            // Clear the topmost row after shifting
+            for (int c = 0; c < TOTAL_COLS; ++c) {
+                grid[0][c].clear();
+            }
+
 
             r--;
         }
@@ -314,10 +322,11 @@ void Board::clearLines() {
         }
 
         blocksSinceClear = 0;
-        linesCleared = 0;
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
+
+        linesCleared = 0;
     }
 }
 
@@ -333,22 +342,26 @@ void Board::calculateScore(int linesCleared) {
 // Levels
 
 void Board::levelUp() {
-    if (currLevelNum < 4) {
+    if (currLevelNum >= 4) {
+        cerr << "Level too high to level up" << endl;
+        return;
+    }
+    else {
         currLevelNum++;
         cout << "Level Up! New Level: " << currLevelNum << endl;
     }
-
+    
     switch (currLevelNum) {
-        case 0:
+        case 1:
             currLevel = make_unique<Level1>();
             break;
-        case 1:
+        case 2:
             currLevel = make_unique<Level2>();
             break;
-        case 2:
+        case 3:
             currLevel = make_unique<Level3>(seqFile);
             break;
-        case 3:
+        case 4:
             currLevel = make_unique<Level4>(seqFile);
             break;
         default:
@@ -358,22 +371,27 @@ void Board::levelUp() {
 }
 
 void Board::levelDown() {
-    if (currLevelNum != 0) {
+    if (currLevelNum == 0) {
+        cerr << "Level too low to level down" << endl;
+        return;
+    }
+    else {
         currLevelNum--;
         cout << "Level Down! New Level: " << currLevelNum << endl;
     }
+    
 
     switch (currLevelNum) {
-        case 1:
+        case 0:
             currLevel = make_unique<Level0>(seqFile);
             break;
-        case 2:
+        case 1:
             currLevel = make_unique<Level1>();
             break;
-        case 3:
+        case 2:
             currLevel = make_unique<Level2>();
             break;
-        case 4:
+        case 3:
             currLevel = make_unique<Level3>(seqFile);
             break;
         default:
@@ -393,6 +411,7 @@ void Board::setLevelFile(string file) {
 }
 
 
+// Testing purposes, prints one board
 void Board::display() const {
     for (int r = 0; r < TOTAL_ROWS; r++) {
         cout << "|";
@@ -410,9 +429,10 @@ void Board::display() const {
     cout << "+\n";
 
     // Print score and hi score
-    cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
+    cout << "Score: " << score << "  Hi-Score: " << hiScore;
     
     if (nextBlock) {
+        cout << "Next Block:" << endl;
         nextBlock->print();
     } else {
         cout << "No next block available.\n";
@@ -441,8 +461,6 @@ void Board::reset() {
     blocks.clear();
     freeBlockIDs.clear();
     clearedBlockIDs.clear();
-    currBlockID = -1;
-    nextBlock = nullptr;
     newBlock();
 }
 
