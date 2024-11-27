@@ -419,7 +419,7 @@ void Board::display() const {
     cout << "+\n";
 
     // Print score and hi score
-    cout << "Score: " << score << "  Hi-Score: " << hiScore;
+    cout << "Score: " << score << "  Hi-Score: " << hiScore << endl;
     
     if (nextBlock) {
         cout << "Next Block:" << endl;
