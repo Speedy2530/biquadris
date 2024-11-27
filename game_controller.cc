@@ -1,6 +1,6 @@
 #include "game_controller.h"
 
-GameController::GameController(bool textMode, int seed, string scriptfile1, string scriptfile2,  int startLevel);
+GameController::GameController(bool textMode, int seed, string scriptfile1, string scriptfile2,  int startLevel) :
     player1Turn(true),
     p1Effect('N'),
     p1forceBlock('N'),
@@ -43,7 +43,7 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
 void GameController::playGame() {
     bool gameOver = false;
     while (!gameOver) {
-        curPlayer = player1Turn ? player1.get() : player2.get();
+        curPlayer = player1Turn ? player1 : player2;
 
         if (player1Turn) {
             applyEffect(curPlayer, p1Effect, p1forceBlock);

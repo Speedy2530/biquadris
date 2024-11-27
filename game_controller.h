@@ -9,8 +9,8 @@
 
 class GameController {
     bool player1Turn;
-    std::unique_ptr<Board> player1;
-    std::unique_ptr<Board> player2;
+    shared_ptr<Board> player1;
+    shared_ptr<Board> player2;
     shared_ptr<Board> curPlayer;
     char p1Effect, p1forceBlock;
     char p2Effect, p2forceBlock;
@@ -48,4 +48,3 @@ private:
 };
 
 #endif
-
