@@ -22,7 +22,7 @@ class Board {
         vector <int> freeBlockIDs; // free IDs within the blocks vector for reuse
         int currBlockID;
 
-        vector <int> clearedBlockIDs // list of block IDs that have been cleared (1 per cell)
+        vector <int> clearedBlockIDs; // list of block IDs that have been cleared (1 per cell)
 
         int origRow; 
         int origCol; 

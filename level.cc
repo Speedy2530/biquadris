@@ -3,7 +3,7 @@
 // using namespace std;
 
 Level::Level(int levelNumber, const vector<double>& probs) : 
-    levelNum{levelNumber}, probs{probs}, currIdx{0}, isRand{true} { seed = 0; };
+    levelNum{levelNumber}, probs{probs}, currIdx{0}, isRand{true}, seed{0} {}
 
 void Level::readFile(const string& file) {
     ifstream infile(file);
@@ -76,7 +76,7 @@ int Level::randomIndex() {
     return distance(cumulative.begin(), it);
 }
 
-unique_ptr<Block> blockFromIndex(int idx) {
+unique_ptr<Block> Level::blockFromIndex(int idx) {
     unique_ptr<Block> block = nullptr;
 
     switch(idx) {

@@ -2,11 +2,6 @@
 #define LEVEL0_H
 
 #include "../level.h"
-#include <vector>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
 
 using namespace std;
 

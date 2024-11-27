@@ -28,7 +28,8 @@ class Level {
         // default implementation gets block FROM FILE
         std::unique_ptr<Block> makeBlockFromFile();
         std::unique_ptr<Block> makeRandomBlock();
-        virtual std::unique_ptr<Block> makeNextBlock() = 0;
+        unique_ptr<Block> blockFromIndex(int idx);
+        virtual std::unique_ptr<Block> makeNextBlock(int blocksSinceClear = 0) = 0;
         void readFile(const string& file);
         int randomIndex();
         void setSeed(int seed);

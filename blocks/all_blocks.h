@@ -5,3 +5,4 @@
 #include "lblock.h"
 #include "sblock.h"
 #include "zblock.h"
+#include "asterisk.h"
