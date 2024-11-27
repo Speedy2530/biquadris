@@ -325,7 +325,7 @@ void Board::clearLines() {
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
-        
+
         linesCleared = 0;
     }
 }
@@ -346,8 +346,11 @@ void Board::levelUp() {
         cerr << "Level too high to level up" << endl;
         return;
     }
-    currLevelNum++;
-
+    else {
+        currLevelNum++;
+        cout << "Level Up! New Level: " << currLevelNum << endl;
+    }
+    
     switch (currLevelNum) {
         case 1:
             currLevel = make_unique<Level1>();
@@ -369,10 +372,14 @@ void Board::levelUp() {
 
 void Board::levelDown() {
     if (currLevelNum == 0) {
-        cout << "Level too low to level down" << endl;
+        cerr << "Level too low to level down" << endl;
         return;
     }
-    currLevelNum--;
+    else {
+        currLevelNum--;
+        cout << "Level Down! New Level: " << currLevelNum << endl;
+    }
+    
 
     switch (currLevelNum) {
         case 0:
@@ -394,6 +401,7 @@ void Board::levelDown() {
 }
 
 
+// Testing purposes, prints one board
 void Board::display() const {
     for (int r = 0; r < TOTAL_ROWS; r++) {
         cout << "|";
@@ -414,6 +422,7 @@ void Board::display() const {
     cout << "Score: " << score << "  Hi-Score: " << hiScore;
     
     if (nextBlock) {
+        cout << "Next Block:" << endl;
         nextBlock->print();
     } else {
         cout << "No next block available.\n";
