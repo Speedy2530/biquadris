@@ -118,6 +118,10 @@ bool Board::moveBlockLeft() {
 
     origCol = newCol;
     fillCells();
+    if (blocks[currBlockID]->isHeavy()) {
+        moveBlockDown();
+        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
+    }
 
     return true;
 }
@@ -135,7 +139,12 @@ bool Board::moveBlockRight() {
     }
     
     origCol = newCol;
+
     fillCells();
+    if (blocks[currBlockID]->isHeavy()) {
+        moveBlockDown();
+        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
+    }
 
     return true;
 }
@@ -158,6 +167,14 @@ bool Board::moveBlockDown() {
 
     origRow = newRow;
     fillCells();
+
+    // edge case
+    if (!canPlaceBlock(*blocks[currBlockID], origRow, origCol+1) && !canPlaceBlock(*blocks[currBlockID], origRow, origCol-1)
+        && !canPlaceBlock(*blocks[currBlockID], origRow-1, origCol)) {
+            lockBlock();
+            clearLines();
+            newBlock();
+    }
 
     return true;
 }
@@ -198,8 +215,7 @@ bool Board::dropBlock() {
 }
 
 void Board::lockBlock() {
-    // The block is already placed on the grid
-    // Update any necessary state if needed
+    blocks[currBlockID].setLock(true);
 }
 
 
