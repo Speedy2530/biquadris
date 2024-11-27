@@ -29,6 +29,7 @@ class Level {
         std::unique_ptr<Block> makeBlockFromFile();
         std::unique_ptr<Block> makeRandomBlock();
         unique_ptr<Block> blockFromIndex(int idx);
+        unique_ptr<Block> blockFromShape(char shape);
         virtual std::unique_ptr<Block> makeNextBlock(int blocksSinceClear = 0) = 0;
         void readFile(const string& file);
         int randomIndex();

@@ -90,6 +90,10 @@ void Board::newBlock() {
     nextBlock = currentLevel->makeNextBlock();
 }
 
+void Board::forceBlock(char shape) {
+    blocks[currBlockID] = currentLevel->blockFromShape(shape);
+}
+
 
 bool Board::moveBlockLeft() {
     if (currBlockID == -1) return false;
