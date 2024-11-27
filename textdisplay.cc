@@ -65,7 +65,7 @@ void TextDisplay::displayText() {
 	    "Player 2 Highscore: " << board2.getHiScore() << endl;
 
     // Display Level
-    cout << "Player 1 Level: " << board1.getLevel() << "          " <<
+    cout << "Player 1 Level: " << board1.getLevel() << "           " <<
 	    "Player 2 Level: " << board2.getLevel() << endl;
 
     // Define border characters
