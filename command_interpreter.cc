@@ -84,6 +84,8 @@ int CommandInterpreter::getMultiplier(const string& command) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
     }
+    
+    if (command[0] == '0') return 0;
 
     // If no digits were found, default to 1
     return (multiplier > 0) ? multiplier : 1;
