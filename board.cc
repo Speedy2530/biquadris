@@ -4,24 +4,27 @@
 
 using namespace std;
 
-Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
-    grid{TOTAL_ROWS, vector<Cell>(TOTAL_COLS)},
-    currLevel{move(initialLevel)}, 
-    origRow{3},
-    origCol{0},
-    score{0},
-    hiScore{0},
-    textMode{textMode},
-    currBlockID{-1},
-    gameOver{false},
-    blocksSinceClear{0},
-    linesCleared{0},
-    currLevelNum{0},
-    seqFile{seqFile},
-    blocks{100, nullptr}
-    {
-        nextBlock = currLevel->makeNextBlock(blocksSinceClear);
-        newBlock();
+Board::Board(std::unique_ptr<Level> initialLevel, bool textMode, std::string seqFile) :
+    grid(TOTAL_ROWS, std::vector<Cell>(TOTAL_COLS)),
+    currLevel(std::move(initialLevel)),
+    nextBlock(nullptr),
+    blocks(100),
+    freeBlockIDs(),
+    currBlockID(-1),
+    gameOver(false),
+    clearedBlockIDs(),
+    seqFile(seqFile),
+    origRow(3),
+    origCol(0),
+    score(0),
+    hiScore(0),
+    blocksSinceClear(0),
+    linesCleared(0),
+    currLevelNum(0),
+    textMode(textMode)
+{
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+    newBlock();
 }
 
 
