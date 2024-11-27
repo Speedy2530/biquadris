@@ -46,7 +46,7 @@ class Board {
         void removeBlockFromGrid(int blockID, int row, int col);
         void clearLines();
         void calculateScore(int linesCleared);
-        int getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs);
+        int getNewBlockID();
 
     public:
         static const int TOTAL_ROWS = 18; // 15 playable rows + 3 reserve rows
