@@ -39,7 +39,7 @@ void Board::fillCells() {
     }
 }
 
-int Board::getNewBlockID(vector<unique_ptr<Block>>& blocks, vector<int>& freeBlockIDs) {
+int Board::getNewBlockID() {
     if (!freeBlockIDs.empty()) {
         int id = freeBlockIDs.back();
         freeBlockIDs.pop_back();
@@ -86,7 +86,7 @@ bool Board::canPlaceBlock(const Block& block, int row, int col) const {
 
 // // Important methods
 void Board::newBlock() {
-    int newBlockID = getNewBlockID(blocks, freeBlockIDs);
+    int newBlockID = getNewBlockID();
     blocks[newBlockID] = move(nextBlock);
     currBlockID = newBlockID; 
 
@@ -173,7 +173,7 @@ bool Board::moveBlockDown() {
 
     // edge case
     if (!canPlaceBlock(*blocks[currBlockID], origRow, origCol+1) && !canPlaceBlock(*blocks[currBlockID], origRow, origCol-1)
-        && !canPlaceBlock(*blocks[currBlockID], origRow-1, origCol)) {
+        && !canPlaceBlock(*blocks[currBlockID], origRow+1, origCol)) {
             lockBlock();
             clearLines();
             newBlock();
