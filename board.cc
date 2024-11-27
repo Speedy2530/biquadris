@@ -18,7 +18,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     linesCleared{0},
     currLevelNum{0},
     seqFile{seqFile},
-    blocks{100}
+    blocks{100, nullptr}
     {
         nextBlock = currLevel->makeNextBlock(blocksSinceClear);
         newBlock();
@@ -215,7 +215,7 @@ bool Board::dropBlock() {
 }
 
 void Board::lockBlock() {
-    blocks[currBlockID].setLock(true);
+    blocks[currBlockID]->setLocked(true);
 }
 
 
