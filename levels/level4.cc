@@ -1,6 +1,6 @@
 #include "level4.h"
-#include "block.h"
-#include "blocks/asterisk.h"
+#include "../block.h"
+#include "../blocks/asterisk.h"
 
 Level4::Level4(const string& file) : Level(4, {1.0/9, 1.0/9, 1.0/9, 1.0/9, 2.0/9, 1.0/9, 2.0/9}) {
     readFile(file);
