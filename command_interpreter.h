@@ -7,12 +7,10 @@
 using namespace std;
 
 class CommandInterpreter {
-    string curCommand;
-    int curMultiplier;
 
 public:
-    string removeLeadingNumbers(const string& input);
-    bool startsWith(const string& str, const string& prefix);
+    virtual string removeLeadingNumbers(const string& input);
+    virtual bool startsWith(const string& str, const string& prefix);
     string parseCommand(const string& input);
     int getMultiplier(string command);
     pair<int, string> getNextCommand();

@@ -8,14 +8,12 @@ using namespace std;
 
 class gameController {
     bool player1;
-    Board player1;
-    Board player2;
-    CommandInterpreter commands;
+    unique_ptr<Board> player1;
+    unique_ptr<Board> player2;
+    CommandInterpreter interpreter;
     
-    
-
     public:
-        void getPlayer();
+        gameController(unique_ptr<Board> player1, unique_ptr<Board> player2);
 
 };
 
