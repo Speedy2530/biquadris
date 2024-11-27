@@ -75,11 +75,12 @@ int Level::randomIndex() {
         cumulative[i] = cumulative[i - 1] + probs[i];
     }
 
-    mt19937 gen(seed);
+    random_device rdev;
+    mt19937 gen(rdev());
     uniform_real_distribution<> dis(0.0, 1.0);
     double randomValue = dis(gen);
 
-    auto it = lower_bound(cumulative.begin(), cumulative.end(), randomValue);
+    auto it = upper_bound(cumulative.begin(), cumulative.end(), randomValue);
     return distance(cumulative.begin(), it);
 }
 
