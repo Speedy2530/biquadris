@@ -15,13 +15,13 @@ XWindow::XWindow(const Board &board1, const Board &board2)
               << ", height: " << xw.getHeight() << std::endl;
 
     // Initialize background
-    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::White);
+    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
 }
 
 // Displays the boards and game state
 void XWindow::display(bool player1Turn) {
     // Clear the window
-    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::White);
+    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
 
     // Cell dimensions
     int cellWidth = DESIRED_CELL_WIDTH;

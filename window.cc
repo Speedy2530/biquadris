@@ -44,7 +44,7 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
         "#FFA500", // Orange
         "#ADD8E6", // LightBlue
         "#006400", // DarkGreen
-        "#FFC0CB", // Pink
+        "#FFB7CE", // Pink
         "#A52A2A", // Brown
         "#808080"  // Grey
     };
