@@ -14,9 +14,7 @@ gameController::gameController() :
 void gameController::playGame() {
     bool gameOver = false;
     while (!gameOver) {
-
         curPlayer = player1Turn ? player1.get() : player2.get();
-
 
         if (player1Turn) {
             applyEffect(curPlayer, p1Effect, p1forceBlock);
@@ -25,7 +23,6 @@ void gameController::playGame() {
             applyEffect(curPlayer, p2Effect, p2forceBlock);
             p2Effect = 'N';  
         }
-
 
         curPlayer->display();
 
@@ -42,15 +39,26 @@ void gameController::playGame() {
                 curPlayer->moveBlockRight();
             } else if (command == "down") {
                 curPlayer->moveBlockDown();
+
+
+                if (curPlayer->isCurrentBlockLocked()) {
+
+                    handlePostDrop();
+
+                    if (curPlayer->isGameOver()) {
+                        restartGame();
+                        break;  
+                    }
+
+                    break;  
+                }
             } else if (command == "drop") {
                 curPlayer->dropBlock();
 
-
                 if (curPlayer->isGameOver()) {
                     restartGame();
-                    break;  
+                    break; 
                 }
-
 
                 handlePostDrop();
 
@@ -66,9 +74,6 @@ void gameController::playGame() {
             } else if (command == "restart") {
                 restartGame();
                 break;  
-            } else if (command == "exit") {
-                gameOver = true;
-                break;  
             } else if (isBlockType(command)) {
                 char blockType = command[0];
                 curPlayer->forceBlock(blockType);
@@ -77,7 +82,7 @@ void gameController::playGame() {
                 std::string file;
                 std::cin >> file;
                 curPlayer->setLevelFile(file);
-                break; 
+                break;  
             } else if (command == "random") {
                 curPlayer->setRandom(true);
                 break;  
@@ -93,13 +98,20 @@ void gameController::playGame() {
 
             curPlayer->display();
 
-            if (curPlayer->isGameOver()) {
-                restartGame();
-                break; 
+            if (curPlayer->isCurrentBlockLocked()) {
+                handlePostDrop();
+
+                if (curPlayer->isGameOver()) {
+                    restartGame();
+                    break;  
+                }
+
+                break;  
             }
         }
     }
 }
+
 
 void gameController::applyEffect(Board* player, char effect, char forceBlock) {
     switch (effect) {

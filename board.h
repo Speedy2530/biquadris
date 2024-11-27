@@ -65,6 +65,7 @@ class Board {
         void newBlock();
         void forceBlock(char s);
         void setCellsBlind(bool isBlind);
+        bool isCurrentBlockLocked();
 
         // Levels
         void levelUp();

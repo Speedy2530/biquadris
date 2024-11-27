@@ -235,6 +235,9 @@ void Board::lockBlock() {
     blocks[currBlockID]->setLocked(true);
 }
 
+bool Board::isCurrentBlockLocked() {
+    return blocks[currBlockID]->isLocked();
+}
 
 // Remove the block from the grid without resetting the unique_ptr
 void Board::removeBlockFromGrid(int blockID, int row, int col) {
