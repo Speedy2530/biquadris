@@ -58,6 +58,7 @@ unique_ptr<Block> Level::blockFromShape(char shape) {
 
 unique_ptr<Block> Level::makeBlockFromFile() {
     if (seq.empty()) {
+        cerr << "Warning: The sequence file is empty." << endl;
         return nullptr;
     }
 
@@ -108,7 +109,7 @@ unique_ptr<Block> Level::blockFromIndex(int idx) {
             block = make_unique<ZBlock>(levelNum);
             break;
         default:
-            cerr << "Warning: Unknown block type '" << idx << "' in sequence." << endl;
+            cerr << "Warning: The idx '" << idx << " is not in the correct range [0,6]." << endl;
             break;
     }
     return block;
