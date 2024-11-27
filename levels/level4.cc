@@ -10,7 +10,7 @@ unique_ptr<Block> Level4::makeNextBlock(int blocksSinceClear) {
     if (blocksSinceClear != 0 && blocksSinceClear % 5 == 0) {
         return make_unique<AsteriskBlock>(4);
     }
-    if (isRand) {
+    else if (isRand) {
         auto block = makeRandomBlock();
         block->setHeavy(true);
         return block;
