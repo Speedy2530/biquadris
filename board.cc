@@ -400,6 +400,16 @@ void Board::levelDown() {
     }
 }
 
+void Board::setLevelFile(string file) {
+    if (currLevelNum == 3) {
+        currLevel = make_unique<Level3>(file);
+    }
+    else if (currLevelNum == 4) {
+        currLevel = make_unique<Level4>(file);
+    }
+    currLevel->setRand(false);
+}
+
 
 // Testing purposes, prints one board
 void Board::display() const {
@@ -464,6 +474,8 @@ int Board::getScore() const { return score; }
 int Board::getHiScore() const { return hiScore; }
 
 void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
+
+int Board::getLinesCleared() const { return linesCleared; }
 
 void Board::setRandom(bool isRand) { currLevel->setRand(isRand); };
 

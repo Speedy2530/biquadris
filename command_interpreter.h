@@ -4,16 +4,21 @@
 #include "block.h"
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 class CommandInterpreter {
+    size_t currIdx;
+    vector<string> commands;
 
 public:
-    virtual string removeLeadingNumbers(const string& input);
-    virtual bool startsWith(const string& str, const string& prefix);
+    string removeLeadingNumbers(const string& input);
+    bool startsWith(const string& str, const string& prefix);
     string parseCommand(const string& input);
     int getMultiplier(const string& command);
     pair<int, string> getNextCommand();
+    pair<char, char> getSpecial();
+    void readFile(const string& file);
 };
 
 #endif
