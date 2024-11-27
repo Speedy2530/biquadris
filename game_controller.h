@@ -3,17 +3,22 @@
 
 #include "board.h"
 #include "command_interpreter.h"
+#include <memory>
 
 using namespace std;
 
 class gameController {
-    bool player1;
+    bool player1Turn;
     unique_ptr<Board> player1;
     unique_ptr<Board> player2;
+    char p1Effect, p1forceBlock;
+    char p2Effect, p2forceBlock;
     CommandInterpreter interpreter;
     
     public:
-        gameController(unique_ptr<Board> player1, unique_ptr<Board> player2);
+        gameController();
+        void playTurn();
+        void restartGame();
 
 };
 
