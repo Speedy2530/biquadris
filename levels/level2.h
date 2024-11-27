@@ -9,7 +9,7 @@ class Level2 : public Level {
 
     public:
         Level2();
-        unique_ptr<Block> makeNextBlock() override;
+        unique_ptr<Block> makeNextBlock();
 };
 
 #endif 
