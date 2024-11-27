@@ -1,17 +1,27 @@
 #include "game_controller.h"
 
-gameController::gameController() :
-    player1Turn{true},
-    p1Effect{'N'},
-    p1forceBlock{'N'},
-    p2Effect{'N'},
-    p2forceBlock{'N'} {
-    player1 = std::make_unique<Board>();
-    player2 = std::make_unique<Board>();
-    curPlayer = player1.get();  
+GameController::GameController(bool textMode) :
+    player1Turn(true),
+    p1Effect('N'),
+    p1forceBlock('N'),
+    p2Effect('N'),
+    p2forceBlock('N') {
+    
+    // Initialize Level instances for each player
+    std::unique_ptr<Level> level1 = std::make_unique<Level0>("sequence1.txt");
+    std::unique_ptr<Level> level2 = std::make_unique<Level0>("sequence2.txt"); // You can choose different levels
+
+    // Initialize Board instances with the respective Level instances 
+    player1 = std::make_unique<Board>(std::move(level1), textMode, "sequence1.txt");
+    player2 = std::make_unique<Board>(std::move(level2), textMode, "sequence2.txt");
+    
+    curPlayer = player1.get();
+
+    // Initialize TextDisplay with both boards and the selected mode
+    display = std::make_unique<TextDisplay>(*player1, *player2, textMode);
 }
 
-void gameController::playGame() {
+void GameController::playGame() {
     bool gameOver = false;
     while (!gameOver) {
         curPlayer = player1Turn ? player1.get() : player2.get();
@@ -24,21 +34,24 @@ void gameController::playGame() {
             p2Effect = 'N';  
         }
 
-        curPlayer->display();
+	// Display current game state
+        display->display();
 
+        // Get next command
+        std::pair<int, std::string> nextCommand = interpreter.getNextCommand();
+        std::string fullCommand = nextCommand.second;
+        int multiplier = nextCommand.first;
 
-        auto curCommand = interpreter.getNextCommand();
-        int multiplier = curCommand.first;
-        std::string command = curCommand.second;
+        std::cout << "COMMAND: " << fullCommand << " (x" << multiplier << ")" << std::endl;
 
-
+        // Process commands with multipliers
         for (int i = 0; i < multiplier; ++i) {
-            if (command == "left") {
+            if (fullCommand == "left") {
                 curPlayer->moveBlockLeft();
-            } else if (command == "right") {
+            } else if (fullCommand == "right") {
                 curPlayer->moveBlockRight();
-            } else if (command == "down") {
-                curPlayer->moveBlockDown();
+            } else if (fullCommand == "down") {
+            	curPlayer->moveBlockDown();
 
 
                 if (curPlayer->isCurrentBlockLocked()) {
@@ -52,53 +65,55 @@ void gameController::playGame() {
 
                     break;  
                 }
-            } else if (command == "drop") {
+	    } else if (fullCommand == "drop") {
                 curPlayer->dropBlock();
 
                 if (curPlayer->isGameOver()) {
+                    std::cout << "Game over for current player!" << std::endl;
                     restartGame();
-                    break; 
+                    gameOver = true;
+                    break;
                 }
 
                 handlePostDrop();
-
-                break;  
-            } else if (command == "clockwise") {
+                break; // Exit multiplier loop after drop
+            } else if (fullCommand == "clockwise") {
                 curPlayer->rotateBlock("clockwise");
-            } else if (command == "counterclockwise") {
+            } else if (fullCommand == "counterclockwise") {
                 curPlayer->rotateBlock("counterclockwise");
-            } else if (command == "levelup") {
+            } else if (fullCommand == "levelup") {
                 curPlayer->levelUp();
-            } else if (command == "leveldown") {
+            } else if (fullCommand == "leveldown") {
                 curPlayer->levelDown();
-            } else if (command == "restart") {
+            } else if (fullCommand == "restart") {
                 restartGame();
-                break;  
-            } else if (isBlockType(command)) {
-                char blockType = command[0];
+                break;
+            } else if (isBlockType(fullCommand)) {
+                char blockType = fullCommand[0];
                 curPlayer->forceBlock(blockType);
-                break;  
-            } else if (command == "norandom") {
+                break;
+            } else if (fullCommand == "norandom") {
                 std::string file;
                 std::cin >> file;
                 curPlayer->setLevelFile(file);
-                break;  
-            } else if (command == "random") {
+                break;
+            } else if (fullCommand == "random") {
                 curPlayer->setRandom(true);
-                break;  
-            } else if (command == "sequence") {
+                break;
+            } else if (fullCommand == "sequence") {
                 std::string file;
                 std::cin >> file;
                 interpreter.readFile(file);
-                break;  
+                break;
             } else {
                 std::cout << "Invalid command. Please try again." << std::endl;
-                break;  
+                break;
             }
 
-            curPlayer->display();
-
-            if (curPlayer->isCurrentBlockLocked()) {
+            // Update display after each command
+            display->display();
+        
+	    if (curPlayer->isCurrentBlockLocked()) {
                 handlePostDrop();
 
                 if (curPlayer->isGameOver()) {
@@ -108,12 +123,21 @@ void gameController::playGame() {
 
                 break;  
             }
-        }
+	}
+
+        //if (gameOver) break;
+
+        // Toggle player turns
+        // player1Turn = !player1Turn;
+        //curPlayer = player1Turn ? player1.get() : player2.get();
     }
+
+    // Display final game state
+    std::cout << "Game over! Final scores:" << std::endl;
+    display->display();
 }
 
-
-void gameController::applyEffect(Board* player, char effect, char forceBlock) {
+void GameController::applyEffect(Board* player, char effect, char forceBlock) {
     switch (effect) {
         case 'h':
             player->getBlocks()[player->getCurrBlockID()]->setHeavy(true);
@@ -129,7 +153,7 @@ void gameController::applyEffect(Board* player, char effect, char forceBlock) {
     }
 }
 
-void gameController::handlePostDrop() {
+void GameController::handlePostDrop() {
 
     curPlayer->setCellsBlind(false);
 
@@ -148,13 +172,13 @@ void gameController::handlePostDrop() {
     player1Turn = !player1Turn;
 }
 
-bool gameController::isBlockType(const std::string& command) {
+bool GameController::isBlockType(const std::string& command) {
     return command == "I" || command == "J" || command == "L" ||
            command == "O" || command == "S" || command == "Z" ||
            command == "T";
 }
 
-void gameController::restartGame() {
+void GameController::restartGame() {
     player1->reset();
     player2->reset();
     p1Effect = 'N';
@@ -164,3 +188,5 @@ void gameController::restartGame() {
     player1Turn = true;
     curPlayer = player1.get();
 }
+
+GameController::~GameController() = default;
