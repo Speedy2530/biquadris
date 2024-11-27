@@ -8,6 +8,10 @@ using namespace std;
 pair<int, string> CommandInterpreter::getNextCommand() {
     string command;
     cin >> command;
+    if(!commands.empty() && currIdx < commands.size()) {
+        command = commands[currIdx];
+        currIdx++;
+    }
     if (command.size() > 0) {
         int multiplier = getMultiplier(command);
         string parsed = parseCommand(command);
@@ -49,7 +53,8 @@ string CommandInterpreter::parseCommand(const string& input) {
         {"S", "S"},
         {"Z", "Z"},
         {"T", "T"},
-        {"re", "restart"}
+        {"re", "restart"},
+        {"e", "exit"}
     };
     
     string processedInput = removeLeadingNumbers(input);
@@ -82,4 +87,34 @@ int CommandInterpreter::getMultiplier(const string& command) {
 
     // If no digits were found, default to 1
     return (multiplier > 0) ? multiplier : 1;
+}
+
+pair<char, char> CommandInterpreter::getSpecial() {
+    char action, forceShape;
+    cout << "Choose a special effect: heavy, force, or blind (h/f/b)" << endl;
+    cin >> action; 
+    forceShape = 'N';
+    if (action == 'f') {
+        cout << "Enter the shape of the block to force: " << endl;
+        cin >> forceShape;
+    }
+    return {action, forceShape};
+}
+
+void CommandInterpreter::readFile(const string& file) {
+    ifstream infile(file);
+
+    if (!infile.is_open()) {
+        cerr << "Error: Cannot open sequence file " << file << endl;
+    }
+
+    string command;
+    while (infile >> command) {
+        commands.push_back(command);
+    }
+    infile.close();
+
+    if (commands.empty()) {
+        cerr << "Warning: Sequence file " << file << " is empty." << endl;
+    }
 }
