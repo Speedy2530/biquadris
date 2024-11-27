@@ -325,6 +325,7 @@ void Board::clearLines() {
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
+        
         linesCleared = 0;
     }
 }
@@ -410,7 +411,7 @@ void Board::display() const {
     cout << "+\n";
 
     // Print score and hi score
-    cout << "Score: " << score << "  Hi-Score: " << hiScore << "\n";
+    cout << "Score: " << score << "  Hi-Score: " << hiScore;
     
     if (nextBlock) {
         nextBlock->print();
@@ -441,8 +442,6 @@ void Board::reset() {
     blocks.clear();
     freeBlockIDs.clear();
     clearedBlockIDs.clear();
-    currBlockID = -1;
-    nextBlock = nullptr;
     newBlock();
 }
 

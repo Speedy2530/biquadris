@@ -11,7 +11,7 @@ void Block::print() const {
     }
 
     // Print the grid
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 4; j++) {
             cout << grid[i][j];
         }
