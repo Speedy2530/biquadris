@@ -14,7 +14,7 @@ class CommandInterpreter {
 public:
     string removeLeadingNumbers(const string& input);
     bool startsWith(const string& str, const string& prefix);
-    string parseCommand(const string& input);
+    string parseCommand( const vector<pair<string, string>> commandList, const string& input);
     int getMultiplier(const string& command);
     pair<int, string> getNextCommand();
     pair<char, char> getSpecial();

@@ -56,10 +56,10 @@ public:
     void fillRectangle(int x, int y, int width, int height, int color);
     void drawRectangle(int x, int y, int width, int height, int color);
     void drawLine(int x1, int y1, int x2, int y2, int colour = Black);
-    void drawString(int x, int y, const std::string &msg);
+    void drawString(int x, int y, const std::string &msg, bool isTitle = false);
     void redraw();
 
-    int getTextWidth(const std::string &text);
+    int getTextWidth(const std::string &text, bool isTitle = false);
     int getWidth() const { return width; }
     int getHeight() const { return height; }
 
@@ -76,6 +76,7 @@ private:
     // Unique pointers with custom deleters
     std::unique_ptr<Display, DisplayDeleter> d;
     std::unique_ptr<XFontStruct, FontDeleter> font_info;
+    std::unique_ptr<XFontStruct, FontDeleter> font_title_info; // New font for title
 
     // Disable copy and assignment to maintain unique ownership
     Xwindow(const Xwindow&) = delete;

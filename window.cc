@@ -10,7 +10,8 @@
 Xwindow::Xwindow(int width, int height) 
     : width(width), height(height), 
       d(nullptr, DisplayDeleter()), 
-      font_info(nullptr, FontDeleter(nullptr)) // Temporarily initialize with nullptr
+      font_info(nullptr, FontDeleter(nullptr)), // Temporarily initialize with nullptr
+      font_title_info(nullptr, FontDeleter(nullptr)) // Initialize with nullptr
 {
     // Open the display
     d.reset(XOpenDisplay(nullptr));
@@ -66,22 +67,34 @@ Xwindow::Xwindow(int width, int height)
         // std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
     }
 
-    // Load primary font
-    const char *fontname = "-*-helvetica-bold-r-normal--18-*-*-*-*-*-*-*";
-    XFontStruct *loaded_font = XLoadQueryFont(d.get(), fontname);
-    if (!loaded_font) {
-        std::cerr << "Unable to load font " << fontname << ". Attempting to load default font.\n";
+
+    // Load regular font
+    const char *regular_fontname = "-*-helvetica-bold-r-normal--18-*-*-*-*-*-*-*";
+    XFontStruct *loaded_regular_font = XLoadQueryFont(d.get(), regular_fontname);
+    if (!loaded_regular_font) {
+        std::cerr << "Unable to load font " << regular_fontname << ". Attempting to load default font.\n";
         // Attempt to load a default font
-        loaded_font = XQueryFont(d.get(), XGContextFromGC(gc));
-        if (!loaded_font) {
+        loaded_regular_font = XQueryFont(d.get(), XGContextFromGC(gc));
+        if (!loaded_regular_font) {
             throw std::runtime_error("Failed to load default font");
         }
     }
 
-    // Assign the loaded font to the unique_ptr with the correct deleter
-    font_info = std::unique_ptr<XFontStruct, FontDeleter>(loaded_font, FontDeleter(d.get()));
+    // Assign the loaded regular font to the unique_ptr with the correct deleter
+    font_info = std::unique_ptr<XFontStruct, FontDeleter>(loaded_regular_font, FontDeleter(d.get()));
 
-    // Set the font in the graphics context
+    // Load title font
+    const char *title_fontname = "-*-helvetica-bold-r-normal--24-*-*-*-*-*-*-*"; // Larger size
+    XFontStruct *loaded_title_font = XLoadQueryFont(d.get(), title_fontname);
+    if (!loaded_title_font) {
+        std::cerr << "Unable to load title font " << title_fontname << ". Using regular font as fallback.\n";
+        loaded_title_font = loaded_regular_font; // Fallback to regular font
+    } else {
+        // Assign the loaded title font to the unique_ptr with the correct deleter
+        font_title_info = std::unique_ptr<XFontStruct, FontDeleter>(loaded_title_font, FontDeleter(d.get()));
+    }
+
+    // Set the regular font in the graphics context
     XSetFont(d.get(), gc, font_info->fid);
 }
 
@@ -115,9 +128,25 @@ void Xwindow::drawLine(int x1, int y1, int x2, int y2, int colour) {
 }
 
 // Draw a string at a specific location
-void Xwindow::drawString(int x, int y, const std::string &msg) {
-    XSetForeground(d.get(), gc, BlackPixel(d.get(), DefaultScreen(d.get())));
+void Xwindow::drawString(int x, int y, const std::string &msg, bool isTitle) {
+    if (isTitle && font_title_info) {
+        XSetFont(d.get(), gc, font_title_info->fid);
+    } else {
+        XSetFont(d.get(), gc, font_info->fid);
+    }
+
+    if (isTitle) {
+        XSetForeground(d.get(), gc, BlackPixel(d.get(), DefaultScreen(d.get()))); // Customize as needed
+    } else {
+        XSetForeground(d.get(), gc, BlackPixel(d.get(), DefaultScreen(d.get())));
+    }
+
     XDrawString(d.get(), w, gc, x, y, msg.c_str(), msg.length());
+
+    // Reset to regular font if was using title font
+    if (isTitle && font_info) {
+        XSetFont(d.get(), gc, font_info->fid);
+    }
 }
 
 // Flush the output buffer and redraw the window
@@ -126,10 +155,15 @@ void Xwindow::redraw() {
 }
 
 // Calculate the width of the given text in pixels
-int Xwindow::getTextWidth(const std::string &text) {
+int Xwindow::getTextWidth(const std::string &text, bool isTitle) {
     int direction, ascent, descent;
     XCharStruct overall;
-    XTextExtents(font_info.get(), text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
+
+    if (isTitle && font_title_info) {
+        XTextExtents(font_title_info.get(), text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
+    } else {
+        XTextExtents(font_info.get(), text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
+    }
+
     return overall.width;
 }
-
