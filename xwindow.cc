@@ -23,6 +23,13 @@ void XWindow::display(bool player1Turn) {
     // Clear the window
     xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
 
+    string title = "Biquadris";
+    int windowWidth = xw.getWidth();
+    int titleY = 15; // 15 pixels from the top
+    int textWidth = xw.getTextWidth(title);
+    int titleX = (windowWidth - textWidth) / 2;
+    xw.drawString(titleX, titleY, title);
+
     // Cell dimensions
     int cellWidth = DESIRED_CELL_WIDTH;
     int cellHeight = DESIRED_CELL_HEIGHT;
@@ -107,6 +114,8 @@ void XWindow::display(bool player1Turn) {
         }
     }
 
+
+    // Printing Red Border on Active Player
     // Board dimensions
     int boardWidth1 = board1.getWidth();
     int boardHeight1 = board1.getHeight();
@@ -119,7 +128,16 @@ void XWindow::display(bool player1Turn) {
         xw.drawRectangle(startX2, startY, boardWidth2 * cellWidth, boardHeight2 * cellHeight, Xwindow::Red);
     }	
 
-    int nextBlockY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 20;
+    std::string playerTurn = std::string("Player Turn: ") + (player1Turn ? '1' : '2');
+    int playerY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 20;
+    int playerWidth = xw.getTextWidth(playerTurn);
+    int playerX = (windowWidth - playerWidth) / 2;
+    xw.drawString(playerX, playerY, playerTurn);
+
+ 
+
+    // Display Next Blocks
+    int nextBlockY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 40;
     drawNextBlock(board1, MARGIN_LEFT, nextBlockY);
     drawNextBlock(board2, MARGIN_LEFT + board1.getWidth() * DESIRED_CELL_WIDTH + SPACING, nextBlockY);
 

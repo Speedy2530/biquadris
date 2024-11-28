@@ -34,6 +34,8 @@ private:
     int height;
     unsigned long colorMap[15]; // To store pixel values for colors
 
+    XFontStruct *font_info;
+
 public:
     Xwindow(int width, int height);
     ~Xwindow();
@@ -44,6 +46,7 @@ public:
     void drawString(int x, int y, const std::string &msg);
     void redraw();
 
+    int getTextWidth(const std::string &text);
     int getWidth() const { return width; }
     int getHeight() const { return height; }
 

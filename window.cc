@@ -61,7 +61,9 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
         // std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
     }
 
+    const char *fontname = "-*-helvetica-bold-r-normal--18-*-*-*-*-*-*-*";
     XFontStruct *font = XLoadQueryFont(d, "-*-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
+    font_info = XLoadQueryFont(d, fontname);
     if (font) {
         XSetFont(d, gc, font->fid);
     }
@@ -117,3 +119,9 @@ void Xwindow::redraw() {
     XFlush(d);
 }
 
+int Xwindow::getTextWidth(const std::string &text) {
+    int direction, ascent, descent;
+    XCharStruct overall;
+    XTextExtents(font_info, text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
+    return overall.width;
+}
