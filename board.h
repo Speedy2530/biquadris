@@ -38,6 +38,7 @@ class Board {
         int blocksSinceClear;
         int linesCleared;
         int currLevelNum;
+        int initialLevel;
         bool textMode;
 
         // Helpers
@@ -71,6 +72,7 @@ class Board {
         // Levels
         void levelUp();
         void levelDown();
+        void setLevel(int level);
         void setRandom(bool isRand);
         void setSeed(int seed);
         void setLevelFile(string file);

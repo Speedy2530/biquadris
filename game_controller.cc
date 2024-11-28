@@ -5,8 +5,7 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
     p1Effect('N'),
     p1forceBlock('N'),
     p2Effect('N'),
-    p2forceBlock('N'),
-    gameOver{false} {
+    p2forceBlock('N') {
 
     unique_ptr<Level> level1 = nullptr;
     unique_ptr<Level> level2 = nullptr;
@@ -49,9 +48,10 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
 }
 
 void GameController::playGame() {
-    gameOver = false;
-    while (!gameOver) {
+    while (true) {
         curPlayer = player1Turn ? player1 : player2;
+        string whichPlayer = (player1Turn) ? "Player 1" : "Player 2";
+        cout << "It is currently " << whichPlayer << "'s turn." << endl;
 
         if (player1Turn) {
             applyEffect(curPlayer, p1Effect, p1forceBlock);
@@ -61,7 +61,7 @@ void GameController::playGame() {
             p2Effect = 'N';  
         }
 
-	// Display current game state
+	    // Display current game state
         display->display(player1Turn);
 
         // Get next command
@@ -92,16 +92,15 @@ void GameController::playGame() {
             } else if (fullCommand == "down") {
             	curPlayer->moveBlockDown();
 
-
                 if (curPlayer->wasBlockLockedDuringLastMove()) {
                     handlePostDrop();
                     break;  
                 }
-	    } else if (fullCommand == "drop") {
+	        } else if (fullCommand == "drop") {
                 curPlayer->dropBlock();
 
                 handlePostDrop();
-                break; // Exit multiplier loop after drop
+                break; 
             } else if (fullCommand == "clockwise") {
                 curPlayer->rotateBlock("clockwise");
             } else if (fullCommand == "counterclockwise") {
@@ -113,6 +112,8 @@ void GameController::playGame() {
             } else if (fullCommand == "restart") {
                 restartGame();
                 break;
+            } else if (fullCommand == "exit") {
+                exit(0);
             } else if (isBlockType(fullCommand)) {
                 char blockType = fullCommand[0];
                 curPlayer->forceBlock(blockType);
@@ -134,31 +135,8 @@ void GameController::playGame() {
                 cout << "Invalid command. Please try again." << endl;
                 break;
             }
-
-            // Update display after each command
-        
-	    if (curPlayer->isCurrentBlockLocked()) {
-                handlePostDrop();
-
-                if (curPlayer->isGameOver()) {
-                    restartGame();
-                    break;  
-                }
-
-                break;  
-            }
 	}
-
-        //if (gameOver) break;
-
-        // Toggle player turns
-        // player1Turn = !player1Turn;
-        //curPlayer = player1Turn ? player1.get() : player2.get();
-    }
-
-    // Display final game state
-    cout << "Game over! Final scores:" << endl;
-    display->display(player1Turn);
+}
 }
 
 void GameController::applyEffect(shared_ptr<Board> player, char effect, char forceBlock) {
@@ -180,9 +158,18 @@ void GameController::applyEffect(shared_ptr<Board> player, char effect, char for
 void GameController::handlePostDrop() {
 
     if (curPlayer->isGameOver()) {
-        cout << "Game over for current player!" << endl;
-        restartGame();
-        gameOver = true;
+        cout << "Game over for current player! Final scores:" << endl;
+        display->display(player1Turn);
+        cout << "Enter y/Y to start a new game:" << endl;
+        char start;
+        cin >> start;
+        if (start == 'y' || start == 'Y') { 
+            restartGame();
+            return;
+        }
+        else {
+            exit(0);
+        }
     }
 
     curPlayer->setCellsBlind(false);

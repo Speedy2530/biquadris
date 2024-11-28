@@ -50,6 +50,7 @@ void XWindow::display(bool player1Turn) {
                 case 'T': color = Xwindow::Purple; break;
                 case 'Z': color = Xwindow::Red; break;
                 case '*': color = Xwindow::Brown; break;
+                case '?': color = Xwindow::Black; break;
                 default: color = Xwindow::White; break;
             }
 
@@ -87,7 +88,8 @@ void XWindow::display(bool player1Turn) {
                 case 'S': color = Xwindow::Green; break;
                 case 'T': color = Xwindow::Purple; break;
                 case 'Z': color = Xwindow::Red; break;
-                case '*': color = Xwindow::Black; break;
+                case '*': color = Xwindow::Brown; break;
+                case '?': color = Xwindow::Black; break;
                 default: color = Xwindow::White; break;
             }
 

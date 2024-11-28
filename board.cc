@@ -22,6 +22,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     blocksSinceClear(0),
     linesCleared(0),
     currLevelNum(0),
+    initialLevel{currLevel->getLevelNum()},
     textMode(textMode)
 {
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
@@ -108,11 +109,18 @@ void Board::newBlock() {
         return;
     }
 
-    fillCells();
-    blocksSinceClear++;
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
 
-    if (blocks[currBlockID]->getShape() == '*') dropBlock();
+    // Conditions for dropping *
+    if ((blocks[currBlockID]->getShape() == '*') && (blocksSinceClear == 0)) {
+        blocks[currBlockID] = move(nextBlock);
+        nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+    }
+    else if (blocks[currBlockID]->getShape() == '*') {
+        dropBlock();
+    }
+
+    fillCells();
 
     if (!nextBlock) {
         cerr << "Error: nextBlock is null." << endl;
@@ -240,6 +248,7 @@ bool Board::dropBlock() {
 void Board::lockBlock() {
     blocks[currBlockID]->setLocked(true);
     blockLockedDuringLastMove = true;
+    blocksSinceClear++;
 }
 
 bool Board::isCurrentBlockLocked() {
@@ -364,22 +373,11 @@ void Board::levelUp() {
         cout << "Level Up! New Level: " << currLevelNum << endl;
     }
     
-    switch (currLevelNum) {
-        case 1:
-            currLevel = make_unique<Level1>();
-            break;
-        case 2:
-            currLevel = make_unique<Level2>();
-            break;
-        case 3:
-            currLevel = make_unique<Level3>(seqFile);
-            break;
-        case 4:
-            currLevel = make_unique<Level4>(seqFile);
-            break;
-        default:
-            cout << "No higher level defined. Staying at Level " << currLevelNum << endl;
-            break;
+    setLevel(currLevelNum);
+
+    if (currLevelNum == 4) {
+        blocks[currBlockID]->setHeavy(true);
+        nextBlock->setHeavy(true);
     }
 }
 
@@ -392,8 +390,12 @@ void Board::levelDown() {
         currLevelNum--;
         cout << "Level Down! New Level: " << currLevelNum << endl;
     }
-    
+    setLevel(currLevelNum);
+}
 
+void Board::setLevel(int level) {
+    if (level >= 0 && level <= 4) currLevelNum = level;
+    
     switch (currLevelNum) {
         case 0:
             currLevel = make_unique<Level0>(seqFile);
@@ -407,8 +409,10 @@ void Board::levelDown() {
         case 3:
             currLevel = make_unique<Level3>(seqFile);
             break;
+        case 4:
+            currLevel = make_unique<Level4>(seqFile);
+            break;
         default:
-            cout << "No Lower level defined. Staying at Level " << currLevelNum << endl;
             break;
     }
 }
@@ -475,6 +479,10 @@ void Board::reset() {
     freeBlockIDs.clear();
     clearedBlockIDs.clear();
     blocksSinceClear = 0;
+    currLevelNum = initialLevel;
+    setLevel(currLevelNum);
+
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
     newBlock();
 }
 
