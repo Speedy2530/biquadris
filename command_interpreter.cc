@@ -77,10 +77,10 @@ string CommandInterpreter::parseCommand(const string& input) {
 }
 
 int CommandInterpreter::getMultiplier(const string& command) {
-    int multiplier = 0;   // Initialize to 0 to correctly accumulate digits
+    int multiplier = 0;   
     size_t pos = 0;
 
-    // Iterate over the command string and accumulate digits
+    
     while (pos < command.length() && std::isdigit(static_cast<unsigned char>(command[pos]))) {
         multiplier = multiplier * 10 + (command[pos] - '0');
         ++pos;
@@ -88,20 +88,20 @@ int CommandInterpreter::getMultiplier(const string& command) {
     
     if (command[0] == '0') return 0;
 
-    // If no digits were found, default to 1
+    
     return (multiplier > 0) ? multiplier : 1;
 }
 
 pair<char, char> CommandInterpreter::getSpecial() {
     char action, forceShape;
-    cout << "Choose a special effect: heavy, force, or blind (h/f/b)" << endl;
+    cout << "Choose a special effect: heavy, force, or blind. Enter the command as h, f, or b respectively." << endl;
     cin >> action; 
     forceShape = 'N';
     if (action == 'f') {
         cout << "Enter the shape of the block to force: " << endl;
         cin >> forceShape;
     }
-    return {action, forceShape};
+    return {tolower(action), toupper(forceShape)};
 }
 
 void CommandInterpreter::readFile(const string& file) {
