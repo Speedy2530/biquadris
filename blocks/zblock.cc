@@ -16,11 +16,11 @@ void ZBlock::rotate(string dir) {
     if (dir == "clockwise") {
         switch (rotated) {
             case 0: // Rotate 0° -> 90°
-                relPos = { {0, 1}, {-1, 0}, {-1, 1}, {-2, 0} }; // Vertical Z
+                relPos = { {0, 0}, {-1, 0}, {-1, 1}, {-2, 1} }; // Vertical Z
                 rotated = 1;
                 break;
             case 1: // Rotate 90° -> 0°
-                relPos = { {0, 0}, {0, 1}, {-1, 1}, {-1, 2} }; // Horizontal Z
+                relPos = { {-1, 0}, {-1, 1}, {0, 1}, {0, 2} }; // Horizontal Z
                 rotated = 0;
                 break;
         }

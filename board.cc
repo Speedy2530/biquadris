@@ -129,8 +129,14 @@ void Board::newBlock() {
 }
 
 void Board::forceBlock(char shape) {
+    bool isHeavy = blocks[currBlockID]->isHeavy();
     removeBlockFromGrid(currBlockID, origRow, origCol);
     blocks[currBlockID] = currLevel->blockFromShape(shape);
+    blocks[currBlockID]->setHeavy(isHeavy);
+    if (!canPlaceBlock(origRow, origCol)) {
+        gameOver = true;
+        return;
+    }
     fillCells();
 }
 
@@ -149,9 +155,12 @@ bool Board::moveBlockLeft() {
 
     origCol = newCol;
     fillCells();
-    if (blocks[currBlockID]->isHeavy()) {
+
+    if (!blocks[currBlockID]->isHeavy()) {
+        fillCells();
+    }
+    else {
         moveBlockDown();
-        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
     }
 
     return true;
@@ -171,10 +180,11 @@ bool Board::moveBlockRight() {
     
     origCol = newCol;
 
-    fillCells();
-    if (blocks[currBlockID]->isHeavy()) {
+    if (!blocks[currBlockID]->isHeavy()) {
+        fillCells();
+    }
+    else {
         moveBlockDown();
-        if (!blocks[currBlockID]->isLocked()) moveBlockDown();
     }
 
     return true;
@@ -218,7 +228,12 @@ bool Board::rotateBlock(const string& dir) {
     blocks[currBlockID]->rotate(dir);
 
     if (canPlaceBlock(origRow, origCol)) {
-        fillCells();
+        if (!blocks[currBlockID]->isHeavy()) {
+            fillCells();
+        }
+        else {
+            moveBlockDown();
+        }
 
         return true;
     }
@@ -375,7 +390,7 @@ void Board::levelUp() {
     
     setLevel(currLevelNum);
 
-    if (currLevelNum == 4) {
+    if (currLevelNum == 4 || currLevelNum == 3) {
         blocks[currBlockID]->setHeavy(true);
         nextBlock->setHeavy(true);
     }
@@ -391,6 +406,13 @@ void Board::levelDown() {
         cout << "Level Down! New Level: " << currLevelNum << endl;
     }
     setLevel(currLevelNum);
+
+    if (currLevelNum < 3) {
+        nextBlock->setHeavy(false);
+        if (!blocks[currBlockID]->getHeavyFromEffect()) {
+            blocks[currBlockID]->setHeavy(false);
+        }
+    }
 }
 
 void Board::setLevel(int level) {

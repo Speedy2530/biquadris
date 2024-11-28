@@ -12,6 +12,7 @@ class Block {
         vector <pair <int, int> > relPos; // bottom left is {0, 0}
         bool currBlock;
         bool heavy;
+        bool heavyFromEffect;
         bool locked;
         int rotated; // 0 1 2 3, representing 90, 0, -90, -180 degrees
 
@@ -22,7 +23,7 @@ class Block {
 
     public:
 	Block(bool isCurr, int level, bool isHeavy, int rot)
-    	: currBlock(isCurr), heavy(isHeavy), locked(false), rotated(rot), blockID(idCounter++), blockLevel(level) {}
+    	: currBlock(isCurr), heavy(isHeavy), heavyFromEffect(false), locked(false), rotated(rot), blockID(idCounter++), blockLevel(level) {}
 
         virtual vector <pair <int, int> > getRelPos() const = 0;
         virtual char getShape() const = 0;
@@ -30,9 +31,11 @@ class Block {
         virtual unique_ptr<Block> clone() const = 0;
 
         bool isHeavy() const { return heavy; }
+        bool getHeavyFromEffect() const { return heavyFromEffect; }
         bool isLocked() const { return locked; }
         void setLocked(bool isLocked) { locked = isLocked; }
         void setHeavy(bool isHeavy) { heavy = isHeavy; }
+        void setHeavyFromEffect(bool isHeavyFromEffect) { heavyFromEffect = isHeavyFromEffect; }
         bool isCurrBlock() const { return currBlock; }
         void setAsCurrBlock(bool isCurr) { currBlock = isCurr; }
         int getRotation() const { return rotated; }

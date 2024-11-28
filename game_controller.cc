@@ -143,6 +143,7 @@ void GameController::applyEffect(shared_ptr<Board> player, char effect, char for
     switch (effect) {
         case 'h':
             player->getBlocks()[player->getCurrBlockID()]->setHeavy(true);
+            player->getBlocks()[player->getCurrBlockID()]->setHeavyFromEffect(true);
             break;
         case 'f':
             player->forceBlock(forceBlock);
