@@ -7,33 +7,37 @@
 #include <iostream>
 
 // Constructor
-Xwindow::Xwindow(int width, int height) : width(width), height(height) {
-    // std::cerr << "Initializing Xwindow with width: " << width << ", height: " << height << std::endl;
-    d = XOpenDisplay(NULL);
-    if (d == NULL) {
-        throw "Cannot open display";
+Xwindow::Xwindow(int width, int height) 
+    : width(width), height(height), 
+      d(nullptr, DisplayDeleter()), 
+      font_info(nullptr, FontDeleter(nullptr)) // Temporarily initialize with nullptr
+{
+    // Open the display
+    d.reset(XOpenDisplay(nullptr));
+    if (!d) {
+        throw std::runtime_error("Cannot open display");
     }
 
-    int screen = DefaultScreen(d);
-    w = XCreateSimpleWindow(d, RootWindow(d, screen), 10, 10, width, height, 1,
-                           BlackPixel(d, screen), WhitePixel(d, screen));
+    int screen = DefaultScreen(d.get());
+    w = XCreateSimpleWindow(d.get(), RootWindow(d.get(), screen), 10, 10, width, height, 1,
+                           BlackPixel(d.get(), screen), WhitePixel(d.get(), screen));
     if (!w) {
-        throw "Failed to create X window";
+        throw std::runtime_error("Failed to create X window");
     }
 
-    XSelectInput(d, w, ExposureMask | KeyPressMask);
-    XMapWindow(d, w);
+    XSelectInput(d.get(), w, ExposureMask | KeyPressMask);
+    XMapWindow(d.get(), w);
 
-    gc = XCreateGC(d, w, 0, 0);
+    gc = XCreateGC(d.get(), w, 0, 0);
     if (!gc) {
-        throw "Failed to create graphics context";
+        throw std::runtime_error("Failed to create graphics context");
     }
 
     // Initialize color map
-    colorMap[White] = WhitePixel(d, DefaultScreen(d));
-    colorMap[Black] = BlackPixel(d, DefaultScreen(d));
+    colorMap[White] = WhitePixel(d.get(), screen);
+    colorMap[Black] = BlackPixel(d.get(), screen);
 
-    // Define color names corresponding to enum indices
+    // Define color names corresponding to enum indices starting from Red
     const char* colorNames[] = {
         "#FF0000", // Red
         "#00FF00", // Green
@@ -50,78 +54,82 @@ Xwindow::Xwindow(int width, int height) : width(width), height(height) {
     };
     for (int i = Red; i < NumColors; ++i) {
         XColor xcolor;
-        Colormap colormap = DefaultColormap(d, DefaultScreen(d));
-        if (!XParseColor(d, colormap, colorNames[i - Red], &xcolor)) {
-            throw "Failed to parse color";
+        Colormap colormap = DefaultColormap(d.get(), screen);
+        if (!XParseColor(d.get(), colormap, colorNames[i - Red], &xcolor)) {
+            throw std::runtime_error("Failed to parse color");
         }
-        if (!XAllocColor(d, colormap, &xcolor)) {
-            throw "Failed to allocate color";
+        if (!XAllocColor(d.get(), colormap, &xcolor)) {
+            throw std::runtime_error("Failed to allocate color");
         }
         colorMap[i] = xcolor.pixel;
+        // Optional: Debugging output
         // std::cerr << "Allocated color " << colorNames[i - Red] << " for enum index " << i << std::endl;
     }
 
+    // Load primary font
     const char *fontname = "-*-helvetica-bold-r-normal--18-*-*-*-*-*-*-*";
-    XFontStruct *font = XLoadQueryFont(d, "-*-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
-    font_info = XLoadQueryFont(d, fontname);
-    if (font) {
-        XSetFont(d, gc, font->fid);
+    XFontStruct *loaded_font = XLoadQueryFont(d.get(), fontname);
+    if (!loaded_font) {
+        std::cerr << "Unable to load font " << fontname << ". Attempting to load default font.\n";
+        // Attempt to load a default font
+        loaded_font = XQueryFont(d.get(), XGContextFromGC(gc));
+        if (!loaded_font) {
+            throw std::runtime_error("Failed to load default font");
+        }
     }
+
+    // Assign the loaded font to the unique_ptr with the correct deleter
+    font_info = std::unique_ptr<XFontStruct, FontDeleter>(loaded_font, FontDeleter(d.get()));
+
+    // Set the font in the graphics context
+    XSetFont(d.get(), gc, font_info->fid);
 }
 
 // Destructor
-Xwindow::~Xwindow() {
-    if (gc) {
-        XFreeGC(d, gc);
-    }
-    if (w) {
-        XDestroyWindow(d, w);
-    }
-    if (d) {
-        XCloseDisplay(d);
-    }
-}
+Xwindow::~Xwindow() = default;
 
 // Color mapping method
 unsigned long Xwindow::getColor(int color) {
     if (color >= White && color < NumColors) {
         return colorMap[color];
     }
-    return WhitePixel(d, DefaultScreen(d));
+    return WhitePixel(d.get(), DefaultScreen(d.get()));
 }
 
 // Fill a rectangle with a specific color
 void Xwindow::fillRectangle(int x, int y, int width, int height, int color) {
-    XSetForeground(d, gc, getColor(color));
-    XFillRectangle(d, w, gc, x, y, width, height);
+    XSetForeground(d.get(), gc, getColor(color));
+    XFillRectangle(d.get(), w, gc, x, y, width, height);
 }
 
 // Draw a rectangle border with a specific color
 void Xwindow::drawRectangle(int x, int y, int width, int height, int color) {
-    XSetForeground(d, gc, getColor(color));
-    XDrawRectangle(d, w, gc, x, y, width, height);
+    XSetForeground(d.get(), gc, getColor(color));
+    XDrawRectangle(d.get(), w, gc, x, y, width, height);
 }
 
 // Draw a line with a specific color
 void Xwindow::drawLine(int x1, int y1, int x2, int y2, int colour) {
-    XSetForeground(d, gc, getColor(colour));
-    XDrawLine(d, w, gc, x1, y1, x2, y2);
+    XSetForeground(d.get(), gc, getColor(colour));
+    XDrawLine(d.get(), w, gc, x1, y1, x2, y2);
 }
 
 // Draw a string at a specific location
 void Xwindow::drawString(int x, int y, const std::string &msg) {
-    XSetForeground(d, gc, BlackPixel(d, DefaultScreen(d)));
-    XDrawString(d, w, gc, x, y, msg.c_str(), msg.length());
+    XSetForeground(d.get(), gc, BlackPixel(d.get(), DefaultScreen(d.get())));
+    XDrawString(d.get(), w, gc, x, y, msg.c_str(), msg.length());
 }
 
 // Flush the output buffer and redraw the window
 void Xwindow::redraw() {
-    XFlush(d);
+    XFlush(d.get());
 }
 
+// Calculate the width of the given text in pixels
 int Xwindow::getTextWidth(const std::string &text) {
     int direction, ascent, descent;
     XCharStruct overall;
-    XTextExtents(font_info, text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
+    XTextExtents(font_info.get(), text.c_str(), text.length(), &direction, &ascent, &descent, &overall);
     return overall.width;
 }
+

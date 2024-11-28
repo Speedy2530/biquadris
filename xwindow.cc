@@ -5,14 +5,10 @@
 #include <climits>
 
 // Constructor
-XWindow::XWindow(const Board &board1, const Board &board2) 
-    : board1(board1), board2(board2), 
+XWindow::XWindow(const Board &board1, const Board &board2)
+    : board1(board1), board2(board2),
       xw(MARGIN_LEFT + board1.getWidth() * DESIRED_CELL_WIDTH + SPACING + board2.getWidth() * DESIRED_CELL_WIDTH + MARGIN_RIGHT,
           MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + INFO_HEIGHT + MARGIN_BOTTOM) {
-    
-    // Log the window dimensions
-    // std::cerr << "Initializing Xwindow with width: " << xw.getWidth() 
-    //           << ", height: " << xw.getHeight() << std::endl;
 
     // Initialize background
     xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
@@ -23,7 +19,7 @@ void XWindow::display(bool player1Turn) {
     // Clear the window
     xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
 
-    string title = "Biquadris";
+    std::string title = "Biquadris";
     int windowWidth = xw.getWidth();
     int titleY = 15; // 15 pixels from the top
     int textWidth = xw.getTextWidth(title);
@@ -33,11 +29,11 @@ void XWindow::display(bool player1Turn) {
     // Cell dimensions
     int cellWidth = DESIRED_CELL_WIDTH;
     int cellHeight = DESIRED_CELL_HEIGHT;
-    
+
     // Starting positions with margins
     int startX1 = MARGIN_LEFT;
     int startY = MARGIN_TOP;
-    
+
     // Draw first board
     for (int row = 0; row < board1.getHeight(); ++row) {
         for (int col = 0; col < board1.getWidth(); ++col) {
@@ -62,11 +58,11 @@ void XWindow::display(bool player1Turn) {
             }
 
             if (cell.isFilled()) {
-		// Draw shadow
-    		xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);	
+                // Draw shadow
+                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
-		// Draw a border around the cell
-    		xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                // Draw a border around the cell
+                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             } else {
                 // Draw empty cell border
                 xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
@@ -101,11 +97,11 @@ void XWindow::display(bool player1Turn) {
             }
 
             if (cell.isFilled()) {
-		// Draw shadow
-    		xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);	
+                // Draw shadow
+                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
-		// Draw a border around the cell
-    		xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                // Draw a border around the cell
+                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
             } else {
                 // Draw empty cell border
                 xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
@@ -113,7 +109,6 @@ void XWindow::display(bool player1Turn) {
             }
         }
     }
-
 
     // Printing Red Border on Active Player
     // Board dimensions
@@ -126,15 +121,13 @@ void XWindow::display(bool player1Turn) {
         xw.drawRectangle(startX1, startY, boardWidth1 * cellWidth, boardHeight1 * cellHeight, Xwindow::Red);
     } else {
         xw.drawRectangle(startX2, startY, boardWidth2 * cellWidth, boardHeight2 * cellHeight, Xwindow::Red);
-    }	
+    }
 
-    std::string playerTurn = std::string("Player Turn: ") + (player1Turn ? '1' : '2');
+    std::string playerTurn = "Player Turn: " + std::to_string(player1Turn ? 1 : 2);
     int playerY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 20;
     int playerWidth = xw.getTextWidth(playerTurn);
-    int playerX = (windowWidth - playerWidth) / 2;
+    int playerX = (xw.getWidth() - playerWidth) / 2;
     xw.drawString(playerX, playerY, playerTurn);
-
- 
 
     // Display Next Blocks
     int nextBlockY = MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + 40;
@@ -228,3 +221,4 @@ void XWindow::updateInfo() {
     xw.drawString(scoreX2, infoStartY + 15, scoreStr2);
     xw.drawString(levelX2, infoStartY + 30, levelStr2);
 }
+

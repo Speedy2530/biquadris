@@ -4,6 +4,30 @@
 
 #include <X11/Xlib.h>
 #include <string>
+#include <memory>
+
+// Custom deleter for Display*
+struct DisplayDeleter {
+    void operator()(Display* d) const {
+        if (d) {
+            XCloseDisplay(d);
+        }
+    }
+};
+
+// Custom deleter for XFontStruct*
+struct FontDeleter {
+    Display* d; // Reference to the Display* for proper deallocation
+
+    // Constructor to initialize the Display* reference
+    FontDeleter(Display* display) : d(display) {}
+
+    void operator()(XFontStruct* font) const {
+        if (font) {
+            XFreeFont(d, font);
+        }
+    }
+};
 
 class Xwindow {
 public:
@@ -23,22 +47,11 @@ public:
         Pink,
         Brown,
         Grey,
-	NumColors
+        NumColors
     };
 
-private:
-    Display *d;
-    Window w;
-    GC gc;
-    int width;
-    int height;
-    unsigned long colorMap[15]; // To store pixel values for colors
-
-    XFontStruct *font_info;
-
-public:
     Xwindow(int width, int height);
-    ~Xwindow();
+    ~Xwindow(); // Destructor declared but not defined here
 
     void fillRectangle(int x, int y, int width, int height, int color);
     void drawRectangle(int x, int y, int width, int height, int color);
@@ -52,6 +65,21 @@ public:
 
     // Define color mapping
     unsigned long getColor(int color);
+
+private:
+    int width;
+    int height;
+    Window w;
+    GC gc;
+    unsigned long colorMap[NumColors]; // Updated to match the enum size
+
+    // Unique pointers with custom deleters
+    std::unique_ptr<Display, DisplayDeleter> d;
+    std::unique_ptr<XFontStruct, FontDeleter> font_info;
+
+    // Disable copy and assignment to maintain unique ownership
+    Xwindow(const Xwindow&) = delete;
+    Xwindow& operator=(const Xwindow&) = delete;
 };
 
 #endif
