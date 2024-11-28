@@ -6,35 +6,6 @@
 using namespace std;
 
 pair<int, string> CommandInterpreter::getNextCommand() {
-    cout << "Enter Command: ";
-    string command;
-    cin >> command;
-    if(!commands.empty() && currIdx < commands.size()) {
-        command = commands[currIdx];
-        currIdx++;
-    }
-    if (command.size() > 0) {
-        int multiplier = getMultiplier(command);
-        string parsed = parseCommand(command);
-        return {multiplier, parsed};
-    }
-    return {0, ""};
-}
-
-string CommandInterpreter::removeLeadingNumbers(const string& input) {
-    size_t pos = 0;
-    while (pos < input.length() && isdigit(input[pos], std::locale())) {
-        pos++;
-    }
-    return input.substr(pos);
-}
-
-bool CommandInterpreter::startsWith(const string& str, const string& prefix) {
-    if (prefix.length() > str.length()) return false;
-    return str.compare(0, prefix.length(), prefix) == 0;
-}
-
-string CommandInterpreter::parseCommand(const string& input) {
     const vector<pair<string, string>> commandList = {
         {"lef", "left"},
         {"ri", "right"},
@@ -57,6 +28,38 @@ string CommandInterpreter::parseCommand(const string& input) {
         {"re", "restart"},
         {"e", "exit"}
     };
+
+
+    cout << "Enter Command: ";
+    string command;
+    cin >> command;
+    if(!commands.empty() && currIdx < commands.size()) {
+        command = commands[currIdx];
+        currIdx++;
+    }
+    if (command.size() > 0) {
+        int multiplier = getMultiplier(command);
+        string parsed = parseCommand(commandList, command);
+        return {multiplier, parsed};
+    }
+    return {0, ""};
+}
+
+string CommandInterpreter::removeLeadingNumbers(const string& input) {
+    size_t pos = 0;
+    while (pos < input.length() && isdigit(input[pos], std::locale())) {
+        pos++;
+    }
+    return input.substr(pos);
+}
+
+bool CommandInterpreter::startsWith(const string& str, const string& prefix) {
+    if (prefix.length() > str.length()) return false;
+    return str.compare(0, prefix.length(), prefix) == 0;
+}
+
+string CommandInterpreter::parseCommand( const vector<pair<string, string>> commandList, const string& input) {
+    
     
     string processedInput = removeLeadingNumbers(input);
     
@@ -93,15 +96,23 @@ int CommandInterpreter::getMultiplier(const string& command) {
 }
 
 pair<char, char> CommandInterpreter::getSpecial() {
-    char action, forceShape;
-    cout << "Choose a special effect: heavy, force, or blind. Enter the command as h, f, or b respectively." << endl;
+    const vector<pair<string, string>> commandList = {
+        {"h", "heavy"},
+        {"f", "force"},
+        {"b", "blind"}
+    };
+
+    string action;
+    char forceShape;
+    cout << "Choose a special effect: heavy, force, or blind." << endl;
     cin >> action; 
+    action = parseCommand(commandList, action);
     forceShape = 'N';
-    if (action == 'f') {
+    if (action == "force") {
         cout << "Enter the shape of the block to force: " << endl;
         cin >> forceShape;
     }
-    return {tolower(action), toupper(forceShape)};
+    return {tolower(action[0]), toupper(forceShape)};
 }
 
 void CommandInterpreter::readFile(const string& file) {
