@@ -16,6 +16,8 @@ unique_ptr<Block> Level4::makeNextBlock(int blocksSinceClear) {
         return block;
     }
     else {
-        return makeBlockFromFile();
+        auto block = makeBlockFromFile();
+        block->setHeavy(true);
+        return block;
     }
 }

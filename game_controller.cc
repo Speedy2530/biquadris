@@ -61,7 +61,7 @@ void GameController::playGame() {
             p2Effect = 'N';  
         }
 
-	// Display current game state
+	    // Display current game state
         display->display(player1Turn);
 
         // Get next command
@@ -134,17 +134,6 @@ void GameController::playGame() {
             } else {
                 cout << "Invalid command. Please try again." << endl;
                 break;
-            }
-        
-	    if (curPlayer->isCurrentBlockLocked()) {
-                handlePostDrop();
-
-                if (curPlayer->isGameOver()) {
-                    restartGame();
-                    break;  
-                }
-
-                break;  
             }
 	}
 }
