@@ -21,10 +21,10 @@ void XWindow::display(bool player1Turn) {
 
     std::string title = "Biquadris";
     int windowWidth = xw.getWidth();
-    int titleY = 15; // 15 pixels from the top
-    int textWidth = xw.getTextWidth(title);
+    int titleY = 25; // 15 pixels from the top
+    int textWidth = xw.getTextWidth(title, true);
     int titleX = (windowWidth - textWidth) / 2;
-    xw.drawString(titleX, titleY, title);
+    xw.drawString(titleX, titleY, title, true);
 
     // Cell dimensions
     int cellWidth = DESIRED_CELL_WIDTH;
