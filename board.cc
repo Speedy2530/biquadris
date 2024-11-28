@@ -161,6 +161,7 @@ bool Board::moveBlockLeft() {
     }
     else {
         moveBlockDown();
+        if (blocks[currBlockID]->getHeavyFromEffect()) moveBlockDown();
     }
 
     return true;
@@ -185,6 +186,7 @@ bool Board::moveBlockRight() {
     }
     else {
         moveBlockDown();
+        if (blocks[currBlockID]->getHeavyFromEffect()) moveBlockDown();
     }
 
     return true;
@@ -233,6 +235,7 @@ bool Board::rotateBlock(const string& dir) {
         }
         else {
             moveBlockDown();
+            if (blocks[currBlockID]->getHeavyFromEffect()) moveBlockDown();
         }
 
         return true;
