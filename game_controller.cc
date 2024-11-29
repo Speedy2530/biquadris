@@ -50,7 +50,6 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
 
 void GameController::playGame() {
     while (true) {
-        // curPlayer = player1Turn ? player1 : player2;
         string whichPlayer = (player1Turn) ? "Player 1" : "Player 2";
         cout << "It is currently " << whichPlayer << "'s turn." << endl;
 
@@ -182,7 +181,10 @@ void GameController::handlePostDrop() {
     curPlayer->setCellsBlind(false);
 
     int linesCleared = curPlayer->getLinesCleared();
+    cout << "[DEBUG] lines cleared sent to controller: " << linesCleared << endl;
+
     if (linesCleared > 1) {
+        cerr << "More than 1 line cleared" << endl;
         auto special = interpreter.getSpecial();
         if (player1Turn) {
             p2Effect = special.first;
@@ -193,11 +195,21 @@ void GameController::handlePostDrop() {
         }
     }
 
-    cout << " Switching player turns" << endl;
-    curPlayer->setBlockLockedDuringLastMove(false);
-    player1Turn = !player1Turn;
-    curPlayer = player1Turn ? player1 : player2;
-    curPlayer->newBlock();
+    if (curPlayer->getCurrentBlockShape() == '*') {
+        curPlayer->setBlockLockedDuringLastMove(false);
+        curPlayer->newBlock();
+    }
+    else {
+        cout << " Switching player turns" << endl;
+        curPlayer->setBlockLockedDuringLastMove(false);
+        player1Turn = !player1Turn;
+        curPlayer = player1Turn ? player1 : player2;
+        curPlayer->newBlock();
+    }
+
+    if (curPlayer->wasBlockLockedDuringLastMove() || curPlayer->isGameOver()) {
+        handlePostDrop();
+    }
 }
 
 bool GameController::isBlockType(const string& command) {

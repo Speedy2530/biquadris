@@ -75,26 +75,6 @@ bool Board::canPlaceBlock(int row, int col) const {
     return true;
 }
 
-// bool Board::placeBlock(unique_ptr<Block> block, int row, int col) {
-//     if (!canPlaceBlock(*block, row, col)) {
-//         gameOver = true;
-//         return false;
-//     }
-
-//     int blockID = getNewBlockID(blocks, freeBlockIDs);
-//     blocks[blockID] = move(block);
-//     currBlock = blockID;
-
-//     // Place the block on the grid
-//     fillCells();
-
-//     origRow = row;
-//     origCol = col;
-
-//     return true;
-// }
-
-
 // // Important methods
 void Board::newBlock() {
     int newBlockID = getNewBlockID();
@@ -110,6 +90,14 @@ void Board::newBlock() {
     }
 
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+
+    //testing if it is bounded below
+    if (!canPlaceBlock(origRow+1, origCol)) {
+            gameOver = true;
+            fillCells();
+            lockBlock();
+            return;
+    }
 
     // Conditions for dropping *
     if ((blocks[currBlockID]->getShape() == '*') && (blocksSinceClear == 0)) {
@@ -161,7 +149,7 @@ bool Board::moveBlockLeft() {
     }
     else {
         moveBlockDown();
-        if (blocks[currBlockID]->getHeavyFromEffect()) moveBlockDown();
+        if (blocks[currBlockID]->getHeavyFromEffect()) moveBlockDown(); // second down from heavy special effect
     }
 
     return true;
@@ -199,7 +187,7 @@ bool Board::moveBlockDown() {
 
     removeBlockFromGrid(currBlockID, origRow, origCol);
 
-       if (!canPlaceBlock(newRow, origCol)) {
+    if (!canPlaceBlock(newRow, origCol)) {
         // Can no longer go down, lock the block
         fillCells();
         lockBlock();
@@ -209,15 +197,17 @@ bool Board::moveBlockDown() {
     }
 
     origRow = newRow;
-    fillCells();
 
-    // edge case
-    // if (!canPlaceBlock(origRow, origCol+1) && !canPlaceBlock(origRow, origCol-1)
-    //     && !canPlaceBlock(origRow+1, origCol)) {
-    //         lockBlock();
-    //         clearLines();
-    //         newBlock();
-    // }
+    // if can't go any lower AFTER
+    if (!canPlaceBlock(origRow+1, origCol)) {
+        fillCells();
+        lockBlock();
+        clearLines();
+        return false;
+    }
+    else {
+        fillCells();
+    }
 
     return true;
 }
@@ -260,6 +250,17 @@ bool Board::dropBlock() {
         // Keep moving down until it can't
     }
 
+    for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
+        int r = origRow + relRow;
+        int c = origCol + relCol;
+
+        // if out of bounds or conflicting space
+        if (r < 3 || r >= TOTAL_ROWS || c < 0 || c >= TOTAL_COLS) {
+            gameOver = true;
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -294,6 +295,7 @@ void Board::removeBlockFromGrid(int blockID, int row, int col) {
 }
 
 void Board::clearLines() {
+    cerr << "SETTING LINES CLEARED TO 0!!!!" << endl;
     linesCleared = 0;
     for (int r = 0; r < TOTAL_ROWS; r++) {
         bool isFullLine = true;
@@ -314,6 +316,7 @@ void Board::clearLines() {
             for (int c = 0; c < TOTAL_COLS; c++) {
                 grid[r][c].clear();
             }
+            cerr << "cleared both lines" << endl;
 
             // Shift all rows above down by one
             for (int rowToMove = r; rowToMove > 0; --rowToMove) {
@@ -324,6 +327,8 @@ void Board::clearLines() {
                     );
                 }
             }
+
+            cerr << "shifted row down once" << endl;
 
             // Clear the topmost row after shifting
             for (int c = 0; c < TOTAL_COLS; ++c) {
@@ -367,6 +372,7 @@ void Board::clearLines() {
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
+        cout << "[DEBUG] Total lines cleared in this call: " << linesCleared << endl;
     }
 }
 
@@ -506,6 +512,8 @@ void Board::reset() {
     blocksSinceClear = 0;
     currLevelNum = initialLevel;
     setLevel(currLevelNum);
+
+    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
 }
 
 
@@ -522,6 +530,8 @@ void Board::updateHiScore() { if (score > hiScore) hiScore = score; }
 int Board::getLinesCleared() const { return linesCleared; }
 
 bool Board::wasBlockLockedDuringLastMove() const { return blockLockedDuringLastMove; }
+
+char Board::getCurrentBlockShape() const { return blocks[currBlockID]->getShape(); }
 
 void Board::setRandom(bool isRand) { currLevel->setRand(isRand); };
 

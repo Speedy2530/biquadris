@@ -57,17 +57,10 @@ void XWindow::display(bool player1Turn) {
                 default: color = GraphicsWindow::White; break;
             }
 
-            if (cell.isFilled()) {
-                // Draw shadow
-                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
-                xw.fillRectangle(x, y, cellWidth, cellHeight, color);
-                // Draw a border around the cell
-                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
-            } else {
-                // Draw empty cell border
-                xw.fillRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::White);
-                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
-            }
+            xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
+            xw.fillRectangle(x, y, cellWidth, cellHeight, color);
+            // Draw a border around the cell
+            xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
         }
     }
 
@@ -96,17 +89,10 @@ void XWindow::display(bool player1Turn) {
                 default: color = GraphicsWindow::White; break;
             }
 
-            if (cell.isFilled()) {
-                // Draw shadow
-                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
-                xw.fillRectangle(x, y, cellWidth, cellHeight, color);
-                // Draw a border around the cell
-                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
-            } else {
-                // Draw empty cell border
-                xw.fillRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::White);
-                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
-            }
+            xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
+            xw.fillRectangle(x, y, cellWidth, cellHeight, color);
+            // Draw a border around the cell
+            xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
         }
     }
 
@@ -163,6 +149,7 @@ void XWindow::drawNextBlock(const Board& board, int startX, int startY) {
         case 'S': color = GraphicsWindow::Green; break;
         case 'T': color = GraphicsWindow::Purple; break;
         case 'Z': color = GraphicsWindow::Red; break;
+        case '*': color = GraphicsWindow::Brown; break;
         default: color = GraphicsWindow::White; break;
     }
 

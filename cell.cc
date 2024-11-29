@@ -31,10 +31,6 @@ bool Cell::isFilled() const {
 	return shape != ' ';
 }
 
-bool Cell::isLocked() const {
-	return locked;
-}
-
 bool Cell::isBlind() const {
 	return blind;
 }
@@ -42,10 +38,6 @@ bool Cell::isBlind() const {
 void Cell::fill(char s, int id) {
 	shape = s;
 	blockID = id;
-}
-
-void Cell::setLocked(bool lock) {
-	locked = lock;
 }
 
 void Cell::setBlind(bool b) {

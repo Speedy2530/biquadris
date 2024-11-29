@@ -9,7 +9,7 @@ using namespace std;
 class Cell {
     int row;
     int col;
-    char shape; // ' ' if not filled
+    char shape; // ' ' if not filled, '?' if blind
     bool locked; // if the block dropped
     bool blind;
 
@@ -25,12 +25,10 @@ class Cell {
         char getShape() const;
         int getBlockID() const;
         bool isFilled() const;
-        bool isLocked() const;
         bool isBlind() const;
 
         // Mutators
         void fill(char s, int id = -1);
-        void setLocked(bool lock);
         void setBlind(bool b);
         
         void clear();
