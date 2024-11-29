@@ -12,4 +12,5 @@ class Level4 : public Level {
         unique_ptr<Block> makeNextBlock(int blocksSinceClear);
 };
 
-#endif 
+#endif
+

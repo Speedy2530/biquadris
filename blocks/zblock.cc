@@ -46,3 +46,4 @@ void ZBlock::rotate(string dir) {
 unique_ptr<Block> ZBlock::clone() const {
     return std::make_unique<ZBlock>(*this);
 }
+

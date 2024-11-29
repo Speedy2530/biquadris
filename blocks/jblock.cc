@@ -61,3 +61,4 @@ void JBlock::rotate(string dir) {
 unique_ptr<Block> JBlock::clone() const {
     return std::make_unique<JBlock>(*this);
 }
+

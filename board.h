@@ -104,4 +104,5 @@ class Board {
         const Block* getNextBlock() const;
 };
 
-#endif 
+#endif
+

@@ -19,3 +19,4 @@ class AsteriskBlock : public Block {
 };
 
 #endif
+

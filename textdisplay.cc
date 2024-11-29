@@ -11,24 +11,18 @@ TextDisplay::TextDisplay(const Board &b1, const Board &b2, bool mode)
     if (!textMode) {
         try {
             // Initialize XWindow with both boards
-            xwindow_ptr = new XWindow(board1, board2);
+            xwindow_ptr = make_unique<XWindow>(board1, board2);
         } catch (const char* msg) {
             std::cerr << "Error initializing Xwindow: " << msg << std::endl;
             std::cerr << "Continuing with text mode." << std::endl;
             textMode = true;
-            if (xwindow_ptr) {
-                delete xwindow_ptr;
-                xwindow_ptr = nullptr;
-            }
+	    xwindow_ptr.reset();
         }
     }
 }
 
 // Destructor
 TextDisplay::~TextDisplay() {
-    if (xwindow_ptr) {
-        delete xwindow_ptr;
-    }
 }
 
 // Display method
@@ -202,3 +196,4 @@ std::vector<std::string> TextDisplay::getBlockString(const Block* block) {
 
     return lines;
 }
+

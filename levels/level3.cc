@@ -17,3 +17,4 @@ unique_ptr<Block> Level3::makeNextBlock(int /*blocksSinceClear*/) {
         return block;
     }
 }
+

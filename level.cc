@@ -125,3 +125,4 @@ void Level::setSeed(int seed) {
 void Level::setRand(bool isRand) {
     this->isRand = isRand;
 }
+

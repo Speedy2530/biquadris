@@ -12,4 +12,5 @@ class Level3 : public Level {
         unique_ptr<Block> makeNextBlock(int blocksSinceClear = 0) override;
 };
 
-#endif 
+#endif
+

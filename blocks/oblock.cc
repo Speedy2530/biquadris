@@ -19,3 +19,4 @@ void OBlock::rotate(string /*dir*/) {
 unique_ptr<Block> OBlock::clone() const {
     return std::make_unique<OBlock>(*this);
 }
+

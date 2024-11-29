@@ -23,3 +23,4 @@ unique_ptr<Block> AsteriskBlock::clone() const {
 void AsteriskBlock::print() const {
     cout << "*" << endl;
 }
+

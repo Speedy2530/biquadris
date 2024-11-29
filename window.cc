@@ -174,3 +174,4 @@ int GraphicsWindow::getTextWidth(const std::string &text, bool isTitle) {
 
     return overall.width;
 }
+

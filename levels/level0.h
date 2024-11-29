@@ -14,4 +14,5 @@ class Level0 : public Level {
 	virtual ~Level0();
 };
 
-#endif 
+#endif
+

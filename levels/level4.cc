@@ -21,3 +21,4 @@ unique_ptr<Block> Level4::makeNextBlock(int blocksSinceClear) {
         return block;
     }
 }
+

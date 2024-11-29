@@ -542,3 +542,4 @@ bool Board::isGameOver() const { return gameOver; }
 const Block* Board::getNextBlock() const {
     return nextBlock.get();
 }
+

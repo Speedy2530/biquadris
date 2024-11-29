@@ -20,3 +20,4 @@ void Block::print() const {
 }
 
 int Block::idCounter = 0;
+

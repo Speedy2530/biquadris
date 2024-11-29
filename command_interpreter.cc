@@ -135,3 +135,4 @@ void CommandInterpreter::readFile(const string& file) {
         cerr << "Warning: Sequence file " << file << " is empty." << endl;
     }
 }
+

@@ -45,3 +45,4 @@ void IBlock::rotate(string dir) {
 unique_ptr<Block> IBlock::clone() const {
     return std::make_unique<IBlock>(*this);
 }
+

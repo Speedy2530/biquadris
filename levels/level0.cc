@@ -15,3 +15,4 @@ unique_ptr<Block> Level0::makeNextBlock(int /*blocksSinceClear*/) {
 Level0::~Level0() {
     // Destructor logic if needed (likely empty)
 }
+

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <iostream>
+#include <memory>
 #include "cell.h"
 #include "block.h"
 #include "level.h"
@@ -15,7 +16,7 @@ class TextDisplay {
     const Board &board2;
     bool textMode;
     unsigned int highscore;
-    XWindow *xwindow_ptr; // Use XWindow instead of Xwindow
+    std::unique_ptr<XWindow> xwindow_ptr;
 
 public:
     // Constructor takes two boards and a mode flag
@@ -35,3 +36,4 @@ private:
 };
 
 #endif
+

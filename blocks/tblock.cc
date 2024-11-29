@@ -62,3 +62,4 @@ void TBlock::rotate(string dir) {
 unique_ptr<Block> TBlock::clone() const {
     return std::make_unique<TBlock>(*this);
 }
+

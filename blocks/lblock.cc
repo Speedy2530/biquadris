@@ -62,3 +62,4 @@ void LBlock::rotate(string dir) {
 unique_ptr<Block> LBlock::clone() const {
     return std::make_unique<LBlock>(*this);
 }
+
