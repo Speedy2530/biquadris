@@ -209,6 +209,7 @@ bool GameController::isBlockType(const string& command) {
 void GameController::restartGame() {
     player1->reset();
     player2->reset();
+    player1->newBlock();
     p1Effect = 'N';
     p1forceBlock = 'N';
     p2Effect = 'N';

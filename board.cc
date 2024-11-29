@@ -506,9 +506,6 @@ void Board::reset() {
     blocksSinceClear = 0;
     currLevelNum = initialLevel;
     setLevel(currLevelNum);
-
-    nextBlock = currLevel->makeNextBlock(blocksSinceClear);
-    newBlock();
 }
 
 
