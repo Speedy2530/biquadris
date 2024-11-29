@@ -29,7 +29,7 @@ struct FontDeleter {
     }
 };
 
-class Xwindow {
+class GraphicsWindow {
 public:
     // Enum for colors should be public to allow external access
     enum {
@@ -50,8 +50,8 @@ public:
         NumColors
     };
 
-    Xwindow(int width, int height);
-    ~Xwindow();
+    GraphicsWindow(int width, int height);
+    ~GraphicsWindow();
 
     void fillRectangle(int x, int y, int width, int height, int color);
     void drawRectangle(int x, int y, int width, int height, int color);
@@ -79,8 +79,8 @@ private:
     std::unique_ptr<XFontStruct, FontDeleter> font_title_info; // New font for title
 
     // Disable copy and assignment to maintain unique ownership
-    Xwindow(const Xwindow&) = delete;
-    Xwindow& operator=(const Xwindow&) = delete;
+    GraphicsWindow(const GraphicsWindow&) = delete;
+    GraphicsWindow& operator=(const GraphicsWindow&) = delete;
 };
 
 #endif

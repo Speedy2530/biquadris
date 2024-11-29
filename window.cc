@@ -7,7 +7,7 @@
 #include <iostream>
 
 // Constructor
-Xwindow::Xwindow(int width, int height) 
+GraphicsWindow::GraphicsWindow(int width, int height) 
     : width(width), height(height), 
       d(nullptr, DisplayDeleter()), 
       font_info(nullptr, FontDeleter(nullptr)), // Temporarily initialize with nullptr
@@ -99,7 +99,7 @@ Xwindow::Xwindow(int width, int height)
 }
 
 // Destructor
-Xwindow::~Xwindow() {
+GraphicsWindow::~GraphicsWindow() {
     if (gc) {
         XFreeGC(d.get(), gc); // Free the Graphics Context
     }
@@ -109,7 +109,7 @@ Xwindow::~Xwindow() {
 }
 
 // Color mapping method
-unsigned long Xwindow::getColor(int color) {
+unsigned long GraphicsWindow::getColor(int color) {
     if (color >= White && color < NumColors) {
         return colorMap[color];
     }
@@ -117,25 +117,25 @@ unsigned long Xwindow::getColor(int color) {
 }
 
 // Fill a rectangle with a specific color
-void Xwindow::fillRectangle(int x, int y, int width, int height, int color) {
+void GraphicsWindow::fillRectangle(int x, int y, int width, int height, int color) {
     XSetForeground(d.get(), gc, getColor(color));
     XFillRectangle(d.get(), w, gc, x, y, width, height);
 }
 
 // Draw a rectangle border with a specific color
-void Xwindow::drawRectangle(int x, int y, int width, int height, int color) {
+void GraphicsWindow::drawRectangle(int x, int y, int width, int height, int color) {
     XSetForeground(d.get(), gc, getColor(color));
     XDrawRectangle(d.get(), w, gc, x, y, width, height);
 }
 
 // Draw a line with a specific color
-void Xwindow::drawLine(int x1, int y1, int x2, int y2, int colour) {
+void GraphicsWindow::drawLine(int x1, int y1, int x2, int y2, int colour) {
     XSetForeground(d.get(), gc, getColor(colour));
     XDrawLine(d.get(), w, gc, x1, y1, x2, y2);
 }
 
 // Draw a string at a specific location
-void Xwindow::drawString(int x, int y, const std::string &msg, bool isTitle) {
+void GraphicsWindow::drawString(int x, int y, const std::string &msg, bool isTitle) {
     if (isTitle && font_title_info) {
         XSetFont(d.get(), gc, font_title_info->fid);
     } else {
@@ -157,12 +157,12 @@ void Xwindow::drawString(int x, int y, const std::string &msg, bool isTitle) {
 }
 
 // Flush the output buffer and redraw the window
-void Xwindow::redraw() {
+void GraphicsWindow::redraw() {
     XFlush(d.get());
 }
 
 // Calculate the width of the given text in pixels
-int Xwindow::getTextWidth(const std::string &text, bool isTitle) {
+int GraphicsWindow::getTextWidth(const std::string &text, bool isTitle) {
     int direction, ascent, descent;
     XCharStruct overall;
 
