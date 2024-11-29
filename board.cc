@@ -26,6 +26,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     textMode(textMode)
 {
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
+    // blocksSinceClear++;
     // newBlock();
 }
 
@@ -85,6 +86,7 @@ void Board::newBlock() {
     origCol = 0;
 
     if (!canPlaceBlock(origRow, origCol)) {
+        cerr << "Can't place curr block on board, game over" << endl;
         gameOver = true;
         return;
     }
@@ -106,6 +108,8 @@ void Board::newBlock() {
     }
     else if (blocks[currBlockID]->getShape() == '*') {
         dropBlock();
+        cerr << "dropped the star" << endl;
+        return;
     }
 
     fillCells();
@@ -202,9 +206,9 @@ bool Board::moveBlockDown() {
     if (!canPlaceBlock(newRow, origCol)) {
         // Can no longer go down, lock the block
         fillCells();
-        lockBlock();
+        if (blocks[currBlockID]->getShape() != '*') lockBlock();
         clearLines();
-        // newBlock();
+
         return false;
     }
 
@@ -262,15 +266,20 @@ bool Board::dropBlock() {
         // Keep moving down until it can't
     }
 
-    for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
-        int r = origRow + relRow;
-        int c = origCol + relCol;
+    if (blocks[currBlockID]) {
+        for (const auto& [relRow, relCol] : blocks[currBlockID]->getRelPos()) {
+            int r = origRow + relRow;
+            int c = origCol + relCol;
 
-        // if out of bounds or conflicting space
-        if (r < 3 || r >= TOTAL_ROWS || c < 0 || c >= TOTAL_COLS) {
-            gameOver = true;
-            return false;
+            // if out of bounds or conflicting space
+            if (r < 3 || r >= TOTAL_ROWS || c < 0 || c >= TOTAL_COLS) {
+                gameOver = true;
+                return false;
+            }
         }
+    }
+    else {
+        newBlock();
     }
 
     return true;
@@ -360,6 +369,11 @@ void Board::clearLines() {
 
             // If cleared block
             if (count == 4 || blocks[blockID]->getShape() == '*') {
+
+                if (blockID == currBlockID && blocks[blockID]->getShape() != '*') {
+                    // cout << "[DEBUG] Skipping reset for active block ID: " << blockID << endl;
+                    continue;
+                }
 
                 int lvl = blocks[blockID]->getBlockLevel();
                 score += (lvl + 1) * (lvl + 1); // add level
@@ -523,6 +537,9 @@ void Board::reset() {
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
 }
 
+vector<int> Board::getFreeBlockIDs() const { return freeBlockIDs; }
+
+vector<int> Board::getClearedBlockIDs() const { return clearedBlockIDs; }
 
 int Board::getCurrBlockID() const { return currBlockID; }
 

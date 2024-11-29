@@ -85,6 +85,8 @@ class Board {
         int getLinesCleared() const;
 
         int getCurrBlockID() const;
+        vector<int> getClearedBlockIDs() const;
+        vector<int> getFreeBlockIDs() const;
         const vector < unique_ptr <Block> > &getBlocks() const;
         bool wasBlockLockedDuringLastMove() const;
         void setBlockLockedDuringLastMove(bool lock);

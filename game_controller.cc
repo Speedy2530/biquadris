@@ -64,7 +64,7 @@ void GameController::playGame() {
 	    // Display current game state
         display->display(player1Turn);
 
-        // Get next command
+        // Get command
         pair<int, string> nextCommand = interpreter.getNextCommand();
         string fullCommand = nextCommand.second;
         int multiplier = nextCommand.first;
@@ -191,14 +191,16 @@ void GameController::handlePostDrop() {
             p1Effect = special.first;
             p1forceBlock = special.second;
         }
-    }
+    } 
 
     if (curPlayer->getCurrentBlockShape() == '*') {
+        // Handle special '*' block
         curPlayer->setBlockLockedDuringLastMove(false);
         curPlayer->newBlock();
+        return;
     }
     else {
-        // cout << " Switching player turns" << endl;
+        // Switch player turns normally
         curPlayer->setBlockLockedDuringLastMove(false);
         player1Turn = !player1Turn;
         curPlayer = player1Turn ? player1 : player2;
@@ -209,6 +211,7 @@ void GameController::handlePostDrop() {
         handlePostDrop();
     }
 }
+
 
 bool GameController::isBlockType(const string& command) {
     return command == "I" || command == "J" || command == "L" ||
