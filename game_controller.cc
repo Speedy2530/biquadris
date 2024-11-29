@@ -28,8 +28,8 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
             level2 = make_unique<Level3>(scriptfile2);
 	    break;
         case 4:
-            level1 = make_unique<Level3>(scriptfile1);
-            level2 = make_unique<Level3>(scriptfile2);
+            level1 = make_unique<Level4>(scriptfile1);
+            level2 = make_unique<Level4>(scriptfile2);
 	    break;
 	default:
 	    break;
@@ -42,6 +42,7 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
     player1->setSeed(seed);
     player2->setSeed(seed);
     
+    player1->newBlock();
     curPlayer = player1;
 
     display = make_unique<TextDisplay>(*player1, *player2, textMode);
@@ -49,7 +50,7 @@ GameController::GameController(bool textMode, int seed, string scriptfile1, stri
 
 void GameController::playGame() {
     while (true) {
-        curPlayer = player1Turn ? player1 : player2;
+        // curPlayer = player1Turn ? player1 : player2;
         string whichPlayer = (player1Turn) ? "Player 1" : "Player 2";
         cout << "It is currently " << whichPlayer << "'s turn." << endl;
 
@@ -190,6 +191,8 @@ void GameController::handlePostDrop() {
     cout << " Switching player turns" << endl;
     curPlayer->setBlockLockedDuringLastMove(false);
     player1Turn = !player1Turn;
+    curPlayer = player1Turn ? player1 : player2;
+    curPlayer->newBlock();
 }
 
 bool GameController::isBlockType(const string& command) {

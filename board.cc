@@ -26,7 +26,7 @@ Board::Board(unique_ptr<Level> initialLevel, bool textMode, string seqFile) :
     textMode(textMode)
 {
     nextBlock = currLevel->makeNextBlock(blocksSinceClear);
-    newBlock();
+    // newBlock();
 }
 
 
@@ -202,7 +202,7 @@ bool Board::moveBlockDown() {
         fillCells();
         lockBlock();
         clearLines();
-        newBlock();
+        // newBlock();
         return false;
     }
 
