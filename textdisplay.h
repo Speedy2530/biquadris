@@ -15,7 +15,7 @@ class TextDisplay {
     const Board &board2;
     bool textMode;
     unsigned int highscore;
-    XWindow *xwindow_ptr; // Use XWindow instead of Xwindow
+    unique_ptr<XWindow> xwindow_ptr; // Use XWindow instead of Xwindow
 
 public:
     // Constructor takes two boards and a mode flag
