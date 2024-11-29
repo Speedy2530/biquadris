@@ -116,14 +116,24 @@ void Board::newBlock() {
     }
 }
 
-void Board::forceBlock(char shape) {
+void Board::forceBlock(char shape, bool testing) {
     bool isHeavy = blocks[currBlockID]->isHeavy();
+    
     removeBlockFromGrid(currBlockID, origRow, origCol);
+    char prevShape = getCurrentBlockShape();
+
     blocks[currBlockID] = currLevel->blockFromShape(shape);
     blocks[currBlockID]->setHeavy(isHeavy);
+
     if (!canPlaceBlock(origRow, origCol)) {
-        gameOver = true;
-        return;
+        if (!testing) {
+            gameOver = true;
+            setBlockLockedDuringLastMove(true);
+            return;
+        }
+        else {
+            forceBlock(prevShape, testing);
+        }
     }
     fillCells();
 }

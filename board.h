@@ -65,7 +65,7 @@ class Board {
         bool rotateBlock(const string& dir);
         bool dropBlock();
         void newBlock();
-        void forceBlock(char s);
+        void forceBlock(char s, bool test);
         void setCellsBlind(bool isBlind);
         bool isCurrentBlockLocked();
         char getCurrentBlockShape() const;

@@ -121,7 +121,7 @@ void GameController::playGame() {
                 exit(0);
             } else if (isBlockType(fullCommand)) {
                 char blockType = fullCommand[0];
-                curPlayer->forceBlock(blockType);
+                curPlayer->forceBlock(blockType, true);
                 break;
             } else if (fullCommand == "norandom") {
                 string file;
@@ -151,7 +151,7 @@ void GameController::applyEffect(shared_ptr<Board> player, char effect, char for
             player->getBlocks()[player->getCurrBlockID()]->setHeavyFromEffect(true);
             break;
         case 'f':
-            player->forceBlock(forceBlock);
+            player->forceBlock(forceBlock, false);
             break;
         case 'b':
             player->setCellsBlind(true);
@@ -222,6 +222,8 @@ void GameController::restartGame() {
     player1->reset();
     player2->reset();
     player1->newBlock();
+    player1->setBlockLockedDuringLastMove(false);
+    player2->setBlockLockedDuringLastMove(false);
     p1Effect = 'N';
     p1forceBlock = 'N';
     p2Effect = 'N';
