@@ -1,0 +1,9 @@
+drop
+drop
+drop
+5ri
+clo
+co
+clo
+3left
+drop

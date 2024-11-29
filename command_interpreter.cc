@@ -15,9 +15,9 @@ pair<int, string> CommandInterpreter::getNextCommand() {
         {"dro", "drop"},
         {"levelu", "levelup"},
         {"leveld", "leveldown"},
-        {"n", "norandom file"},
+        {"n", "norandom"},
         {"ra", "random"},
-        {"s", "sequence file"},
+        {"s", "sequence"},
         {"I", "I"},
         {"J", "J"},
         {"L", "L"},
@@ -28,24 +28,25 @@ pair<int, string> CommandInterpreter::getNextCommand() {
         {"re", "restart"},
         {"e", "exit"}
     };
-
-
-    cout << "Enter Command: ";
     string command;
-    cin >> command;
-    if (cin.eof()) {
-	return {-1, ""};
-    }
     if(!commands.empty() && currIdx < commands.size()) {
         command = commands[currIdx];
         currIdx++;
-    }
-    if (command.size() > 0) {
+
         int multiplier = getMultiplier(command);
         string parsed = parseCommand(commandList, command);
         return {multiplier, parsed};
     }
-    return {0, ""};
+    cout << "Enter Command: ";
+    cin >> command;
+    
+    if (cin.eof()) {
+	return {-1, ""};
+    }
+
+    int multiplier = getMultiplier(command);
+    string parsed = parseCommand(commandList, command);
+    return {multiplier, parsed};
 }
 
 string CommandInterpreter::removeLeadingNumbers(const string& input) {
