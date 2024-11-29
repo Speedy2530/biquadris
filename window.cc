@@ -99,7 +99,14 @@ Xwindow::Xwindow(int width, int height)
 }
 
 // Destructor
-Xwindow::~Xwindow() = default;
+Xwindow::~Xwindow() {
+    if (gc) {
+        XFreeGC(d.get(), gc); // Free the Graphics Context
+    }
+    XDestroyWindow(d.get(), w); // Destroy the window
+
+    // The unique_ptr for Display and XFontStructs will automatically clean up
+}
 
 // Color mapping method
 unsigned long Xwindow::getColor(int color) {

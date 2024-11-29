@@ -51,7 +51,7 @@ public:
     };
 
     Xwindow(int width, int height);
-    ~Xwindow(); // Destructor declared but not defined here
+    ~Xwindow();
 
     void fillRectangle(int x, int y, int width, int height, int color);
     void drawRectangle(int x, int y, int width, int height, int color);
