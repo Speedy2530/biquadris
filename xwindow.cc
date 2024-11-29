@@ -11,13 +11,13 @@ XWindow::XWindow(const Board &board1, const Board &board2)
           MARGIN_TOP + std::max(board1.getHeight(), board2.getHeight()) * DESIRED_CELL_HEIGHT + INFO_HEIGHT + MARGIN_BOTTOM) {
 
     // Initialize background
-    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
+    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), GraphicsWindow::Pink);
 }
 
 // Displays the boards and game state
 void XWindow::display(bool player1Turn) {
     // Clear the window
-    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), Xwindow::Pink);
+    xw.fillRectangle(0, 0, xw.getWidth(), xw.getHeight(), GraphicsWindow::Pink);
 
     std::string title = "Biquadris";
     int windowWidth = xw.getWidth();
@@ -41,32 +41,32 @@ void XWindow::display(bool player1Turn) {
             int x = startX1 + col * cellWidth;
             int y = startY + row * cellHeight;
 
-            int color = Xwindow::White; // Default color
+            int color = GraphicsWindow::White; // Default color
 
             char shape = cell.getShape();
             switch(shape) {
-                case 'I': color = Xwindow::Cyan; break;
-                case 'J': color = Xwindow::Blue; break;
-                case 'L': color = Xwindow::Orange; break;
-                case 'O': color = Xwindow::Yellow; break;
-                case 'S': color = Xwindow::Green; break;
-                case 'T': color = Xwindow::Purple; break;
-                case 'Z': color = Xwindow::Red; break;
-                case '*': color = Xwindow::Brown; break;
-                case '?': color = Xwindow::Black; break;
-                default: color = Xwindow::White; break;
+                case 'I': color = GraphicsWindow::Cyan; break;
+                case 'J': color = GraphicsWindow::Blue; break;
+                case 'L': color = GraphicsWindow::Orange; break;
+                case 'O': color = GraphicsWindow::Yellow; break;
+                case 'S': color = GraphicsWindow::Green; break;
+                case 'T': color = GraphicsWindow::Purple; break;
+                case 'Z': color = GraphicsWindow::Red; break;
+                case '*': color = GraphicsWindow::Brown; break;
+                case '?': color = GraphicsWindow::Black; break;
+                default: color = GraphicsWindow::White; break;
             }
 
             if (cell.isFilled()) {
                 // Draw shadow
-                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);
+                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
                 // Draw a border around the cell
-                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
             } else {
                 // Draw empty cell border
-                xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
-                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                xw.fillRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::White);
+                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
             }
         }
     }
@@ -80,32 +80,32 @@ void XWindow::display(bool player1Turn) {
             int x = startX2 + col * cellWidth;
             int y = startY + row * cellHeight;
 
-            int color = Xwindow::White; // Default color
+            int color = GraphicsWindow::White; // Default color
 
             char shape = cell.getShape();
             switch(shape) {
-                case 'I': color = Xwindow::Cyan; break;
-                case 'J': color = Xwindow::Blue; break;
-                case 'L': color = Xwindow::Orange; break;
-                case 'O': color = Xwindow::Yellow; break;
-                case 'S': color = Xwindow::Green; break;
-                case 'T': color = Xwindow::Purple; break;
-                case 'Z': color = Xwindow::Red; break;
-                case '*': color = Xwindow::Brown; break;
-                case '?': color = Xwindow::Black; break;
-                default: color = Xwindow::White; break;
+                case 'I': color = GraphicsWindow::Cyan; break;
+                case 'J': color = GraphicsWindow::Blue; break;
+                case 'L': color = GraphicsWindow::Orange; break;
+                case 'O': color = GraphicsWindow::Yellow; break;
+                case 'S': color = GraphicsWindow::Green; break;
+                case 'T': color = GraphicsWindow::Purple; break;
+                case 'Z': color = GraphicsWindow::Red; break;
+                case '*': color = GraphicsWindow::Brown; break;
+                case '?': color = GraphicsWindow::Black; break;
+                default: color = GraphicsWindow::White; break;
             }
 
             if (cell.isFilled()) {
                 // Draw shadow
-                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, Xwindow::Grey);
+                xw.fillRectangle(x + 2, y + 2, cellWidth, cellHeight, GraphicsWindow::Grey);
                 xw.fillRectangle(x, y, cellWidth, cellHeight, color);
                 // Draw a border around the cell
-                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
             } else {
                 // Draw empty cell border
-                xw.fillRectangle(x, y, cellWidth, cellHeight, Xwindow::White);
-                xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+                xw.fillRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::White);
+                xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
             }
         }
     }
@@ -118,9 +118,9 @@ void XWindow::display(bool player1Turn) {
     int boardHeight2 = board2.getHeight();
 
     if (player1Turn) {
-        xw.drawRectangle(startX1, startY, boardWidth1 * cellWidth, boardHeight1 * cellHeight, Xwindow::Red);
+        xw.drawRectangle(startX1, startY, boardWidth1 * cellWidth, boardHeight1 * cellHeight, GraphicsWindow::Red);
     } else {
-        xw.drawRectangle(startX2, startY, boardWidth2 * cellWidth, boardHeight2 * cellHeight, Xwindow::Red);
+        xw.drawRectangle(startX2, startY, boardWidth2 * cellWidth, boardHeight2 * cellHeight, GraphicsWindow::Red);
     }
 
     std::string playerTurn = "Player Turn: " + std::to_string(player1Turn ? 1 : 2);
@@ -156,14 +156,14 @@ void XWindow::drawNextBlock(const Board& board, int startX, int startY) {
     // Determine color based on block type
     int color;
     switch(shape) {
-        case 'I': color = Xwindow::Cyan; break;
-        case 'J': color = Xwindow::Blue; break;
-        case 'L': color = Xwindow::Orange; break;
-        case 'O': color = Xwindow::Yellow; break;
-        case 'S': color = Xwindow::Green; break;
-        case 'T': color = Xwindow::Purple; break;
-        case 'Z': color = Xwindow::Red; break;
-        default: color = Xwindow::White; break;
+        case 'I': color = GraphicsWindow::Cyan; break;
+        case 'J': color = GraphicsWindow::Blue; break;
+        case 'L': color = GraphicsWindow::Orange; break;
+        case 'O': color = GraphicsWindow::Yellow; break;
+        case 'S': color = GraphicsWindow::Green; break;
+        case 'T': color = GraphicsWindow::Purple; break;
+        case 'Z': color = GraphicsWindow::Red; break;
+        default: color = GraphicsWindow::White; break;
     }
 
     // Adjust positions to center the block in a 4x4 grid
@@ -187,7 +187,7 @@ void XWindow::drawNextBlock(const Board& board, int startX, int startY) {
         int y = startY + (pos.first - minRow + offsetY) * cellHeight;
 
         xw.fillRectangle(x, y, cellWidth, cellHeight, color);
-        xw.drawRectangle(x, y, cellWidth, cellHeight, Xwindow::Black);
+        xw.drawRectangle(x, y, cellWidth, cellHeight, GraphicsWindow::Black);
     }
 
     // Draw a label "Next:"

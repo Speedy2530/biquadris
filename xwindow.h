@@ -2,7 +2,7 @@
 #ifndef XWINDOW_H
 #define XWINDOW_H
 
-#include "window.h" // Include the Xwindow class
+#include "window.h" // Include the GraphicsWindow class
 #include "board.h"
 #include <string>
 
@@ -19,7 +19,7 @@ const int SPACING = 20;             // Space between the two boards
 class XWindow {
     const Board &board1;
     const Board &board2;
-    Xwindow xw; // Instance of Xwindow
+    GraphicsWindow xw; // Instance of GraphicsWindow
 
     void drawNextBlock(const Board& board, int startX, int startY);
 
