@@ -33,6 +33,9 @@ pair<int, string> CommandInterpreter::getNextCommand() {
     cout << "Enter Command: ";
     string command;
     cin >> command;
+    if (cin.eof()) {
+	return {-1, ""};
+    }
     if(!commands.empty() && currIdx < commands.size()) {
         command = commands[currIdx];
         currIdx++;

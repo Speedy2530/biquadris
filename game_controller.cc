@@ -70,6 +70,11 @@ void GameController::playGame() {
         string fullCommand = nextCommand.second;
         int multiplier = nextCommand.first;
 
+	if (multiplier == -1) {
+	    cout << endl << "Game Over!" << endl;
+	    break;
+	}
+
         cout << "COMMAND: " << fullCommand << " (x" << multiplier << ")" << endl;
 
         // Process commands with multipliers
