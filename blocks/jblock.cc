@@ -2,15 +2,13 @@
 
 using namespace std;
 
-JBlock::JBlock(bool isCurr) : Block{isCurr, 0, false, 0}, shape{'J'} {
+JBlock::JBlock(int level) : Block{level, false, 0, 'J'} {
     relPos = { {-1, 0}, {0, 0}, {0, 1}, {0, 2} };  // Imagine the bottom left was {0, 0}
 }
 
 vector <pair <int, int> > JBlock::getRelPos() const {
     return relPos;
 }
-
-char JBlock::getShape() const { return 'J'; }
 
 void JBlock::rotate(string dir) {
     if (dir == "clockwise") {
@@ -53,12 +51,3 @@ void JBlock::rotate(string dir) {
         }
     }
 }
-
-// For above  v
-//essentially, when you add the block to the board, just get its Cell values by adding <3, 0>,
-//or whatever the coordinate of the current bottom left is on the board (absRow, absCol).
-
-unique_ptr<Block> JBlock::clone() const {
-    return std::make_unique<JBlock>(*this);
-}
-

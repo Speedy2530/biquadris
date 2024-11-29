@@ -118,12 +118,14 @@ void Board::newBlock() {
 
 void Board::forceBlock(char shape, bool testing) {
     bool isHeavy = blocks[currBlockID]->isHeavy();
+    int level = blocks[currBlockID]->getBlockLevel();
     
     removeBlockFromGrid(currBlockID, origRow, origCol);
     char prevShape = getCurrentBlockShape();
 
     blocks[currBlockID] = currLevel->blockFromShape(shape);
     blocks[currBlockID]->setHeavy(isHeavy);
+    blocks[currBlockID]->setBlockLevel(level);
 
     if (!canPlaceBlock(origRow, origCol)) {
         if (!testing) {
@@ -305,7 +307,6 @@ void Board::removeBlockFromGrid(int blockID, int row, int col) {
 }
 
 void Board::clearLines() {
-    cerr << "SETTING LINES CLEARED TO 0!!!!" << endl;
     linesCleared = 0;
     for (int r = 0; r < TOTAL_ROWS; r++) {
         bool isFullLine = true;
@@ -326,7 +327,6 @@ void Board::clearLines() {
             for (int c = 0; c < TOTAL_COLS; c++) {
                 grid[r][c].clear();
             }
-            cerr << "cleared both lines" << endl;
 
             // Shift all rows above down by one
             for (int rowToMove = r; rowToMove > 0; --rowToMove) {
@@ -337,8 +337,6 @@ void Board::clearLines() {
                     );
                 }
             }
-
-            cerr << "shifted row down once" << endl;
 
             // Clear the topmost row after shifting
             for (int c = 0; c < TOTAL_COLS; ++c) {
@@ -382,7 +380,6 @@ void Board::clearLines() {
 
         // Update the score based on lines cleared
         calculateScore(linesCleared);
-        cout << "[DEBUG] Total lines cleared in this call: " << linesCleared << endl;
     }
 }
 

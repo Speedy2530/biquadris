@@ -6,14 +6,11 @@
 using namespace std;
 
 class OBlock : public Block {
-    char shape;
 
     public:
-        OBlock(bool isCurr = false);
+        OBlock(int level = 0);
         vector <pair <int, int> > getRelPos() const override;
-        char getShape() const override;
         void rotate(string dir) override;
-        unique_ptr<Block> clone() const override;
 };
 
 #endif

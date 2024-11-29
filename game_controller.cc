@@ -82,7 +82,7 @@ void GameController::playGame() {
                 curPlayer->moveBlockLeft();
 
                 if (curPlayer->wasBlockLockedDuringLastMove()) {
-                    cout << "curr block is locked" << endl;
+                    // cout << "curr block is locked" << endl;
                     handlePostDrop();
                     break;  
                 }
@@ -90,7 +90,7 @@ void GameController::playGame() {
                 curPlayer->moveBlockRight();
 
                 if (curPlayer->wasBlockLockedDuringLastMove()) {
-                    cout << "curr block is locked" << endl;
+                    // cout << "curr block is locked" << endl;
                     handlePostDrop();
                     break;  
                 }
@@ -181,10 +181,8 @@ void GameController::handlePostDrop() {
     curPlayer->setCellsBlind(false);
 
     int linesCleared = curPlayer->getLinesCleared();
-    cout << "[DEBUG] lines cleared sent to controller: " << linesCleared << endl;
 
     if (linesCleared > 1) {
-        cerr << "More than 1 line cleared" << endl;
         auto special = interpreter.getSpecial();
         if (player1Turn) {
             p2Effect = special.first;
@@ -200,7 +198,7 @@ void GameController::handlePostDrop() {
         curPlayer->newBlock();
     }
     else {
-        cout << " Switching player turns" << endl;
+        // cout << " Switching player turns" << endl;
         curPlayer->setBlockLockedDuringLastMove(false);
         player1Turn = !player1Turn;
         curPlayer = player1Turn ? player1 : player2;

@@ -6,14 +6,11 @@
 using namespace std;
 
 class LBlock : public Block {
-    char shape;
 
     public:
-        LBlock(bool isCurr = false);
+        LBlock(int level = 0);
         vector <pair <int, int> > getRelPos() const override;
-        char getShape() const override;
         void rotate(string dir) override;
-        unique_ptr<Block> clone() const override;
 };
 
 #endif
